@@ -9,7 +9,7 @@
 #define DEFAULT_UPLOAD_PRX 1
 #define TARGET_ID_SIZE 4 // eg. 0x84
 
-typedef struct {
+struct configuration {
   int exploit_fixes;
   int mmap_patches;
   int block_updates;
@@ -17,8 +17,8 @@ typedef struct {
   int nobd_patches;
   int upload_prx;
   char target_id[TARGET_ID_SIZE + 1]; // Add null term
-} configuration;
+};
 
-int init_config(configuration *config);
+int init_config(struct configuration *config);
 
 #endif

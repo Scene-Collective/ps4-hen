@@ -121,7 +121,7 @@ int _main(struct thread *td) {
   install_patches();
 
   // Initialize config
-  configuration config;
+  struct configuration config;
   init_config(&config);
 
   if (config.exploit_fixes) {

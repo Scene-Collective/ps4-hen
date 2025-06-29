@@ -12,7 +12,7 @@ static void upload_ver(void) {
 }
 
 // Helper function to set all configuration values to their defaults
-static void set_config_defaults(configuration *config) {
+static void set_config_defaults(struct configuration *config) {
   memset(config, '\0', sizeof(*config));
   config->exploit_fixes = DEFAULT_EXPLOIT_FIXES;
   config->mmap_patches = DEFAULT_MMAP_PATCHES;
@@ -41,7 +41,7 @@ static int set_bool_config(const char *name, const char *value, int *config_fiel
 // The return values are flipped in this function compared to the rest of this
 // file because the INI lib expects it that way
 static int config_handler(void *config, const char *name, const char *value) {
-  configuration *config_p = (configuration *)config;
+  struct configuration *config_p = (struct configuration *)config;
 
   if (MATCH("exploit_fixes")) {
     return set_bool_config("exploit_fixes", value, &config_p->exploit_fixes, DEFAULT_EXPLOIT_FIXES);
@@ -83,7 +83,7 @@ static int config_handler(void *config, const char *name, const char *value) {
   }
 }
 
-int init_config(configuration *config) {
+int init_config(struct configuration *config) {
   // Create HEN directory, if it doesn't already exist
   if (!dir_exists(BASE_PATH)) {
     mkdir(BASE_PATH, 0777);
