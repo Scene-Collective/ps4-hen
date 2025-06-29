@@ -136,6 +136,7 @@ PAYLOAD_CODE static inline void pfs_generate_sign_key(uint8_t *ekpfs, uint8_t se
 }
 
 PAYLOAD_CODE static inline int npdrm_decrypt_debug_rif(unsigned int type, uint8_t *data) {
+  (void)(type); // UNUSED(type);
   struct thread *td = curthread();
   int ret;
 

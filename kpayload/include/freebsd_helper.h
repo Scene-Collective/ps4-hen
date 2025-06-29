@@ -1,6 +1,5 @@
-#ifndef __FREEBSD_HELPER_H__
-#define __FREEBSD_HELPER_H__
-#pragma once
+#ifndef FREEBSD_HELPER_H_
+#define FREEBSD_HELPER_H_
 
 #define EVENTHANDLER_PRI_PRE_FIRST -10000
 #define EVENTHANDLER_PRI_LAST      20000

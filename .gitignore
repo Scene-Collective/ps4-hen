@@ -1,11 +1,14 @@
 /.vscode/
 
 /installer/build/
+/installer/temp.t
 /installer/source/*.inc.c
 /installer/*.bin
 /installer/*.map
 
 /kpayload/build/
+/kpayload/temp.t
+/kpayload/temp.u
 /kpayload/*.bin
 /kpayload/*.map
 

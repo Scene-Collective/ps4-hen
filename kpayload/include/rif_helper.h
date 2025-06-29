@@ -1,6 +1,5 @@
-#ifndef __RIF_HELPER_H__
-#define __RIF_HELPER_H__
-#pragma once
+#ifndef RIF_HELPER_H_
+#define RIF_HELPER_H_
 
 #define RIF_DIGEST_SIZE 0x10
 #define RIF_DATA_SIZE 0x90

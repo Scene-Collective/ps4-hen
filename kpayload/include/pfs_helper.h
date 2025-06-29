@@ -1,6 +1,5 @@
-#ifndef __PFS_HELPER_H__
-#define __PFS_HELPER_H__
-#pragma once
+#ifndef PFS_HELPER_H_
+#define PFS_HELPER_H_
 
 #define EKPFS_SIZE 0x20
 #define EEKPFS_SIZE 0x100

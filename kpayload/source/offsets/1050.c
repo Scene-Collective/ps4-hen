@@ -2,6 +2,8 @@
 
 #include "offsets/1050.h"
 
+// clang-format off
+
 const struct kpayload_offsets offsets_1050 PAYLOAD_RDATA = {
   // data
   .XFAST_SYSCALL_addr              = 0x000001C0,
@@ -15,7 +17,6 @@ const struct kpayload_offsets offsets_1050 PAYLOAD_RDATA = {
   .SBL_KEYMGR_BUF_VA_addr          = 0x02664000,
   .SBL_KEYMGR_BUF_GVA_addr         = 0x02664808,
   .FPU_CTX_addr                    = 0x026796C0,
-  .DIPSW_addr                      = 0x01BE45D0,
   .SYSENT_addr                     = 0x011029C0,
 
   // common
@@ -129,3 +130,5 @@ const struct kpayload_offsets offsets_1050 PAYLOAD_RDATA = {
   // SceShellCore patches - disable screenshot block
   .disable_screenshot_patch        = 0x000CF876,
 };
+
+// clang-format on

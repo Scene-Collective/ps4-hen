@@ -1,6 +1,5 @@
-#ifndef __CCP_HELPER_H__
-#define __CCP_HELPER_H__
-#pragma once
+#ifndef CCP_HELPER_H_
+#define CCP_HELPER_H_
 
 #define CCP_MAX_PAYLOAD_SIZE 0x88
 #define CCP_OP(cmd) (cmd >> 24)

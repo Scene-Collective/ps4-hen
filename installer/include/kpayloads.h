@@ -1,23 +1,5 @@
-#ifndef DEFINES_H
-#define DEFINES_H
-
-#include "types.h"
-
-struct kpayload_payload_header {
-  uint64_t signature;
-  size_t entrypoint_offset;
-};
-
-struct kpayload_payload_info {
-  uint16_t fw_version;
-  uint8_t *buffer;
-  size_t size;
-};
-
-struct kpayload_install_payload_args {
-  void *syscall_handler;
-  struct kpayload_payload_info *kpayload_payload_info;
-};
+#ifndef KPAYLOADS_H_
+#define KPAYLOADS_H_
 
 #define patch_macro(x)                                                                     \
   kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K##x##_XFAST_SYSCALL];                \
@@ -48,5 +30,25 @@ struct kpayload_install_payload_args {
   kernel_pmap_store = &kernel_ptr[K##x##_PMAP_STORE];                       \
   pmap_protect_p_patch = &kernel_ptr[K##x##_PMAP_PROTECT_P];                \
   pmap_protect = (void *)(kernel_base + K##x##_PMAP_PROTECT);
+
+struct kpayload_payload_header {
+  uint64_t signature;
+  size_t entrypoint_offset;
+};
+
+struct kpayload_payload_info {
+  uint16_t fw_version;
+  uint8_t *buffer;
+  size_t size;
+};
+
+struct kpayload_install_payload_args {
+  void *syscall_handler;
+  struct kpayload_payload_info *kpayload_payload_info;
+};
+
+int install_patches();
+int install_payload();
+int exploit_fixes();
 
 #endif

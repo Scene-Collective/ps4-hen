@@ -1,5 +1,7 @@
-#ifndef OFFSETS_H
-#define OFFSETS_H
+#ifndef OFFSETS_H_
+#define OFFSETS_H_
+
+// clang-format off
 
 #define K300_PMAP_PROTECT  0x0
 #define K310_PMAP_PROTECT  0x0
@@ -1188,5 +1190,7 @@
 #define K1200_DEPTH_LIMIT_PATCH 0x00030F66
 #define K1202_DEPTH_LIMIT_PATCH 0x00030F66
 #define K1250_DEPTH_LIMIT_PATCH 0x0
+
+// clang-format on
 
 #endif

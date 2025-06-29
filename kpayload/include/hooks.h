@@ -1,9 +1,8 @@
+#ifndef HOOKS_H_
+#define HOOKS_H_
+
 // golden
 // 6/12/2018
-//
-
-#ifndef _HOOKS_H
-#define _HOOKS_H
 
 // #include "proc.h"
 #include "elf.h"

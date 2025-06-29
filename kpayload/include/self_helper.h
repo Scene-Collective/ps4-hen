@@ -1,6 +1,5 @@
-#ifndef __SELF_HELPER_H__
-#define __SELF_HELPER_H__
-#pragma once
+#ifndef SELF_HELPER_H_
+#define SELF_HELPER_H_
 
 #define SELF_DIGEST_SIZE 0x20
 #define SELF_CONTENT_ID_SIZE 0x13

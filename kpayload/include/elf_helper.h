@@ -1,6 +1,5 @@
-#ifndef __ELF_HELPER_H__
-#define __ELF_HELPER_H__
-#pragma once
+#ifndef ELF_HELPER_H_
+#define ELF_HELPER_H_
 
 #define ELF_IDENT_SIZE 0x10
 #define ELF_EHDR_EXT_SIZE 0x1000

@@ -1,6 +1,5 @@
-#ifndef __SPARSE_H__
-#define __SPARSE_H__
-#pragma once
+#ifndef SPARSE_H_
+#define SPARSE_H_
 
 #define JOIN_HELPER(x, y) x##y
 #define JOIN(x, y) JOIN_HELPER(x, y)

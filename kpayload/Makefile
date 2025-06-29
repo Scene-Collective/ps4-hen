@@ -1,5 +1,6 @@
 CC	:= gcc
 OBJCOPY	:= objcopy
+RM	:= rm
 ODIR	:= build
 SDIR	:= source
 IDIR	:= include
@@ -34,20 +35,20 @@ payload: $(ODIR) $(OBJS)
 	@$(CC) $(OBJS) -o temp.t $(CFLAGS) $(LFLAGS)
 	@$(OBJCOPY) -R .payload_bss temp.t temp.u
 	@$(OBJCOPY) -O binary temp.u $(TARGET)
-	@rm -f temp.t temp.u
+	@$(RM) -f temp.t temp.u
 	@echo "Build complete: $(TARGET)"
 
 # Generate payload include file for installer
 payload-include: $(TARGET)
 	@echo "Generating payload include file..."
-	@if command -v xxd >/dev/null 2>&1; then \
+	@if command -v xxd >/dev/null 2>&1; then                                                                  \
 		xxd -i $(TARGET) | sed 's/^unsigned /static const unsigned /' > ../installer/source/kpayload.inc.c || { \
-			echo "Error: xxd command failed while generating payload include file"; \
-			exit 1; \
-		}; \
-	else \
-		echo "Error: xxd command not found. Please install xxd"; \
-		exit 1; \
+			echo "Error: xxd command failed while generating payload include file";                               \
+			exit 1;                                                                                               \
+		};                                                                                                      \
+	else                                                                                                      \
+		echo "Error: xxd command not found. Please install xxd";                                                \
+		exit 1;                                                                                                 \
 	fi
 	@echo "Payload include file generated: ../installer/source/kpayload.inc.c"
 
@@ -66,7 +67,7 @@ $(ODIR):
 
 clean:
 	@echo "Cleaning build artifacts..."
-	@rm -rf $(TARGET) $(MAPFILE) $(ODIR)
+	@$(RM) -rf $(TARGET) $(MAPFILE) $(ODIR) temp.t temp.u
 
 info:
 	@echo "Build Configuration:"
@@ -82,3 +83,5 @@ help:
 	@echo "  clean   - Remove build artifacts"
 	@echo "  info    - Show build configuration"
 	@echo "  help    - Show this help message"
+
+.INTERMEDIATE: temp.t temp.u
