@@ -365,13 +365,13 @@ static int kpayload_install_payload(struct thread *td, struct kpayload_install_p
 // 10.00, 10.01, 10.50, 10.70, 10.71                                     // pppwn
 // 11.00                                                                 // pppwn
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static int kpayload_exploit_fixes(struct thread* td, struct kpayload_firmware_args* args) {
+static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_args *args) {
   UNUSED(td);
-  void* kernel_base;
-  uint8_t* kernel_ptr;
+  void *kernel_base;
+  uint8_t *kernel_ptr;
 
   // Use "kmem" for all patches
-  uint8_t* kmem;
+  uint8_t *kmem;
 
   uint16_t fw_version = args->kpayload_firmware_info->fw_version;
 
@@ -386,7 +386,7 @@ static int kpayload_exploit_fixes(struct thread* td, struct kpayload_firmware_ar
   if (fw_version >= 505 && fw_version <= 507) {
     // Cryptogenic/PS4-5.05-Kernel-Exploit: ????
     // ChendoChap/ps4-ipv6-uaf:             ????
-    kmem = (uint8_t*)&kernel_ptr[0x00237F3A];
+    kmem = (uint8_t *)&kernel_ptr[0x00237F3A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
     kmem[2] = 0xC0;
@@ -396,7 +396,7 @@ static int kpayload_exploit_fixes(struct thread* td, struct kpayload_firmware_ar
   } else if (fw_version == 672) {
     // ChendoChap/ps4-ipv6-uaf: Good
     // sleirsgoevy/ps4jb2:      Bad/Missing?
-    kmem = (uint8_t*)&kernel_ptr[0x001D895A];
+    kmem = (uint8_t *)&kernel_ptr[0x001D895A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
     kmem[2] = 0xC6;
@@ -407,7 +407,7 @@ static int kpayload_exploit_fixes(struct thread* td, struct kpayload_firmware_ar
     // ChendoChap/ps4-ipv6-uaf: Good
     // sleirsgoevy/ps4jb2:      Bad/Missing?
     // TheOfficialFloW/PPPwn:   Missing
-    kmem = (uint8_t*)&kernel_ptr[0x0009547B];
+    kmem = (uint8_t *)&kernel_ptr[0x0009547B];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
     kmem[2] = 0xBC;
@@ -418,7 +418,7 @@ static int kpayload_exploit_fixes(struct thread* td, struct kpayload_firmware_ar
     // ChendoChap/ps4-ipv6-uaf: Good
     // sleirsgoevy/ps4jb2:      Bad/Missing?
     // TheOfficialFloW/PPPwn:   Missing
-    kmem = (uint8_t*)&kernel_ptr[0x004523C4];
+    kmem = (uint8_t *)&kernel_ptr[0x004523C4];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
     kmem[2] = 0xC7;
