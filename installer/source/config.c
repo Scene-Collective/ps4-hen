@@ -64,13 +64,18 @@ static int config_handler(void *config, const char *name, const char *value) {
     } else if (value[0] != '0' || value[1] != 'x' || !isxdigit(value[2]) || !isxdigit(value[3])) {
       printf_notification("ERROR: Malformed target_id:\n    Incorrect format, must be 0x?? (e.g. 0x84)");
       memset(config_p->target_id, '\0', sizeof(config_p->target_id));
-    } else if (!((tolower(value[2]) == '8' && ((value[3] >= '0' && value[3] <= '9') || (tolower(value[3]) >= 'a' && tolower(value[3]) <= 'f'))) || (tolower(value[2]) == 'a' && value[3] == '0'))) {
-      // Trust the clusterfuck of an if statement above is correct
-      printf_notification("ERROR: Unknown target_id:\n    Only 0x80-0x8F and 0xA0 are valid");
-      memset(config_p->target_id, '\0', sizeof(config_p->target_id));
     } else {
-      memcpy(config_p->target_id, value, TARGET_ID_SIZE);
-      config_p->target_id[TARGET_ID_SIZE] = '\0';
+      int parsed_id;
+      if (sscanf(value, "%x", &parsed_id) != 1) {
+        printf_notification("ERROR: Failed to parse target_id:\n    Unable to convert hex value");
+        memset(config_p->target_id, '\0', sizeof(config_p->target_id));
+      } else if (!((parsed_id >= 0x80 && parsed_id <= 0x8F) || parsed_id == 0xA0)) {
+        printf_notification("ERROR: Unknown target_id:\n    Only 0x80-0x8F and 0xA0 are valid");
+        memset(config_p->target_id, '\0', sizeof(config_p->target_id));
+      } else {
+        memcpy(config_p->target_id, value, TARGET_ID_SIZE);
+        config_p->target_id[TARGET_ID_SIZE] = '\0';
+      }
     }
     return 1;
   } else {

@@ -85,6 +85,7 @@ static void set_target_id(char *tid) {
 
   if (spoof_target_id(hex) != 0) {
     printf_notification("ERROR: Unable to spoof target ID");
+    return;
   }
 
   printf_notification("Spoofing: %s", buffer);
@@ -107,6 +108,12 @@ int _main(struct thread *td) {
   DEBUG_SOCK = SckConnect(DEBUG_IP, DEBUG_PORT);
 #endif
 
+  uint16_t fw_version = get_firmware();
+  if (fw_version < MIN_FW || fw_version > MAX_FW) {
+    printf_notification("Unsupported Firmware");
+    return -1;
+  }
+
   // Jailbreak the process
   jailbreak();
 
@@ -117,8 +124,6 @@ int _main(struct thread *td) {
   configuration config;
   init_config(&config);
 
-  // Fix bad/missing exploit patches
-  // Hopefully this is just temporary, see kpayload.c for more info
   if (config.exploit_fixes) {
     printf_debug("Applying exploit fixes...\n");
     exploit_fixes();
@@ -140,7 +145,7 @@ int _main(struct thread *td) {
   }
 
   if (config.nobd_patches) {
-    printf_debug("Installling NoBD patches...\n");
+    printf_debug("Installing NoBD patches...\n");
     no_bd_patch();
     printf_notification("NoBD patches enabled");
   }
@@ -148,14 +153,14 @@ int _main(struct thread *td) {
   // Install and run kpayload
   install_payload();
 
-  // Do this after the kpayload so if the user spoofs it doesn't effect checks in the kpayload
+  // Do this after the kpayload so if the user spoofs it doesn't affect checks in the kpayload
   if (config.target_id[0] != '\0') {
     printf_debug("Setting new target ID...\n");
     set_target_id(config.target_id);
   }
 
   if (config.upload_prx) {
-    printf_debug("Writing plugin PRXs to disc...\n");
+    printf_debug("Writing plugin PRXs to disk...\n");
     upload_prx_to_disk();
   }
 
@@ -165,11 +170,12 @@ int _main(struct thread *td) {
   const bool kill_ui = false;
   const int sleep_sec = kill_ui ? 4 : 1;
   const int u_to_sec = 1000 * 1000;
-  const char *proc = kill_ui ? "SceShellUI" : 0;
+  const char *proc = kill_ui ? "SceShellUI" : NULL;
   if (kill_ui) {
     usleep(sleep_sec * u_to_sec);
     printf_notification("HEN will restart %s\nin %d seconds...", proc, sleep_sec);
   }
+
 #ifdef DEBUG_SOCKET
   printf_debug("Closing socket...\n");
   SckClose(DEBUG_SOCK);

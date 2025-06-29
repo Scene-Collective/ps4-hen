@@ -130,7 +130,7 @@ PAYLOAD_CODE static inline void pfs_generate_enc_key(uint8_t *ekpfs, uint8_t see
   pfs_gen_crypto_key(ekpfs, seed, 1, key);
 }
 
-// asigning key generator based on EKPFS and PFS header seed
+// assigning key generator based on EKPFS and PFS header seed
 PAYLOAD_CODE static inline void pfs_generate_sign_key(uint8_t *ekpfs, uint8_t seed[PFS_SEED_SIZE], uint8_t key[PFS_FINAL_KEY_SIZE]) {
   pfs_gen_crypto_key(ekpfs, seed, 2, key);
 }
