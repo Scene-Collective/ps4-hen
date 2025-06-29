@@ -1,9 +1,17 @@
 #include <ps4.h>
 
 #include "common.h"
-#include "config.h"
 #include "path.h"
 #include "version.h"
+
+#include "config.h"
+
+#define DEFAULT_EXPLOIT_FIXES 0
+#define DEFAULT_MMAP_PATCHES 1
+#define DEFAULT_BLOCK_UPDATES 1
+#define DEFAULT_DISABLE_ASLR 1
+#define DEFAULT_NOBD_PATCHES 0
+#define DEFAULT_UPLOAD_PRX 1
 
 #define MATCH(n) strcmp(name, n) == 0
 
