@@ -1,6 +1,8 @@
 #ifndef ELF_HELPER_H_
 #define ELF_HELPER_H_
 
+// clang-format off
+
 #define ELF_IDENT_SIZE 0x10
 #define ELF_EHDR_EXT_SIZE 0x1000
 
@@ -81,5 +83,7 @@ struct elf64_shdr {
   elf64_xword_t addralign;
   elf64_xword_t entsize;
 };
+
+// clang-format on
 
 #endif

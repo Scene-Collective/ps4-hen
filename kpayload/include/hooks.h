@@ -1,6 +1,8 @@
 #ifndef HOOKS_H_
 #define HOOKS_H_
 
+// clang-format off
+
 // golden
 // 6/12/2018
 
@@ -157,5 +159,7 @@ struct dynlib_dlsym_args {
   const char *symbol;
   uintptr_t *symbol_ptr;
 };
+
+// clang-format on
 
 #endif

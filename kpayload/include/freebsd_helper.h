@@ -1,6 +1,8 @@
 #ifndef FREEBSD_HELPER_H_
 #define FREEBSD_HELPER_H_
 
+// clang-format off
+
 #define EVENTHANDLER_PRI_PRE_FIRST -10000
 #define EVENTHANDLER_PRI_LAST      20000
 
@@ -157,5 +159,7 @@ TYPE_FIELD(char contentid[64], 0x3D4);
 TYPE_FIELD(char path[64], 0x474);
 
 TYPE_END();
+
+// clang-format on
 
 #endif

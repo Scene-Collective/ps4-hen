@@ -1,6 +1,8 @@
 #ifndef CCP_HELPER_H_
 #define CCP_HELPER_H_
 
+// clang-format off
+
 #define CCP_MAX_PAYLOAD_SIZE 0x88
 #define CCP_OP(cmd) (cmd >> 24)
 #define CCP_OP_AES  0
@@ -71,5 +73,7 @@ struct sbl_msg {
     uint8_t raw[0x1000];
   };
 };
+
+// clang-format on
 
 #endif

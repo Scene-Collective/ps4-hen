@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// clang-format off
 #include "sections.h"
 #include "sparse.h"
 #include "offsets.h"
@@ -12,17 +13,18 @@
 #include "self_helper.h"
 #include "sbl_helper.h"
 #include "amd_helper.h"
+// clang-format on
 
 #include "hooks.h"
 
 #include "../../installer/include/path.h"
 
 extern char *(*strstr)(const char *haystack, const char *needle)PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-extern void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+extern void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 extern int (*printf)(const char *fmt, ...) PAYLOAD_BSS;
 
-extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p) PAYLOAD_BSS;
+extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p)PAYLOAD_BSS;
 extern void (*vmspace_free)(struct vmspace *vm) PAYLOAD_BSS;
 extern void (*vm_map_lock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern void (*vm_map_unlock_read)(struct vm_map *map) PAYLOAD_BSS;

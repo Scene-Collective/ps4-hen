@@ -1,6 +1,8 @@
 #ifndef OFFSETS_H_
 #define OFFSETS_H_
 
+// clang-format off
+
 #include <stdint.h>
 
 #include "sections.h"
@@ -134,5 +136,7 @@ struct kpayload_offsets {
 
 // Lookup function: implemented elsewhere
 PAYLOAD_CODE const struct kpayload_offsets *get_offsets_for_fw(uint16_t fw_version);
+
+// clang-format on
 
 #endif

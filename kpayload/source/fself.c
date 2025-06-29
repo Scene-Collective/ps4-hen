@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// clang-format off
 #include "sections.h"
 #include "sparse.h"
 #include "offsets.h"
@@ -9,15 +10,16 @@
 #include "self_helper.h"
 #include "sbl_helper.h"
 #include "amd_helper.h"
+// clang-format on
 
 #define PAGE_SIZE 0x4000
 
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;
 
-extern void *(*malloc)(unsigned long size, void *type, int flags) PAYLOAD_BSS;
+extern void *(*malloc)(unsigned long size, void *type, int flags)PAYLOAD_BSS;
 extern void (*free)(void *addr, void *type) PAYLOAD_BSS;
-extern char *(*strstr)(const char *haystack, const char *needle) PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
+extern char *(*strstr)(const char *haystack, const char *needle)PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
 extern size_t (*strlen)(const char *str) PAYLOAD_BSS;
 
 extern void *M_TEMP PAYLOAD_BSS;
@@ -30,6 +32,8 @@ extern int (*sceSblAuthMgrSmIsLoadable2)(struct self_context *ctx, struct self_a
 extern int (*_sceSblAuthMgrGetSelfInfo)(struct self_context *ctx, struct self_ex_info **info) PAYLOAD_BSS;
 extern void (*_sceSblAuthMgrSmStart)(void **) PAYLOAD_BSS;
 extern int (*sceSblAuthMgrVerifyHeader)(struct self_context *ctx) PAYLOAD_BSS;
+
+// clang-format off
 
 static const uint8_t s_auth_info_for_exec[] PAYLOAD_RDATA = {
   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x31, 0x00, 0x00, 0x00, 0x00, 0x80, 0x03, 0x00, 0x20,
@@ -54,6 +58,8 @@ static const uint8_t s_auth_info_for_dynlib[] PAYLOAD_RDATA = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
+
+// clang-format on
 
 PAYLOAD_CODE static inline void *alloc(uint32_t size) {
   return malloc(size, M_TEMP, 2);

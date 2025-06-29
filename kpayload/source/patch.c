@@ -1,27 +1,29 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// clang-format off
 #include "sections.h"
 #include "sparse.h"
 #include "offsets.h"
 #include "freebsd_helper.h"
 #include "amd_helper.h"
+// clang-format on
 
 extern uint16_t fw_version PAYLOAD_BSS;
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;
 
 extern int (*proc_rwmem)(struct proc *p, struct uio *uio) PAYLOAD_BSS;
-extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p) PAYLOAD_BSS;
+extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p)PAYLOAD_BSS;
 extern void (*vmspace_free)(struct vmspace *vm) PAYLOAD_BSS;
 extern void (*vm_map_lock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern void (*vm_map_unlock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern int (*vm_map_lookup_entry)(struct vm_map *map, uint64_t address, struct vm_map_entry **entries) PAYLOAD_BSS;
 
 extern size_t (*strlen)(const char *str) PAYLOAD_BSS;
-extern void *(*malloc)(unsigned long size, void *type, int flags) PAYLOAD_BSS;
+extern void *(*malloc)(unsigned long size, void *type, int flags)PAYLOAD_BSS;
 extern void (*free)(void *addr, void *type) PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-extern void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+extern void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 extern int (*memcmp)(const void *ptr1, const void *ptr2, size_t num) PAYLOAD_BSS;
 // Varies per FW
 extern void (*eventhandler_register_old)(void *list, const char *name, void *func, void *arg, int priority) PAYLOAD_BSS; // < 5.50
@@ -167,6 +169,8 @@ PAYLOAD_CODE int shellcore_patch(void) {
 
   int ret = 0;
 
+  // clang-format off
+
   uint32_t call_ofs_for__xor__eax_eax__jmp[] = {
     // call sceKernelIsGenuineCEX
     fw_offsets->sceKernelIsGenuineCEX_patch1,
@@ -179,6 +183,8 @@ PAYLOAD_CODE int shellcore_patch(void) {
     fw_offsets->nidf_libSceDipsw_patch3,
     fw_offsets->nidf_libSceDipsw_patch4,
   };
+
+  // clang-format on
 
   struct proc *ssc = proc_find_by_name("SceShellCore");
 

@@ -1,6 +1,8 @@
 #ifndef SELF_HELPER_H_
 #define SELF_HELPER_H_
 
+// clang-format off
+
 #define SELF_DIGEST_SIZE 0x20
 #define SELF_CONTENT_ID_SIZE 0x13
 #define SELF_RANDOM_PAD_SIZE 0x0D
@@ -78,5 +80,7 @@ TYPE_BEGIN(struct self_fake_auth_info, SIZEOF_SELF_FAKE_AUTH_INFO);
 TYPE_FIELD(uint64_t size, 0x00);
 TYPE_FIELD(struct self_auth_info info, 0x08);
 TYPE_END();
+
+// clang-format on
 
 #endif

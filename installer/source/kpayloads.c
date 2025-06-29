@@ -8,6 +8,7 @@
 
 #define KERNEL_BASE_FILE 0xFFFFFFFF82200000
 
+// clang-format off
 #define patch_macro(x)                                                                     \
   kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K##x##_XFAST_SYSCALL];                \
   kernel_ptr = (uint8_t *)kernel_base;                                                     \
@@ -30,6 +31,7 @@
   debug_settings_error_patch_2 = &kernel_ptr[K##x##_DEBUG_SETTINGS_ERROR_PATCH_2];         \
   /* mount_patch = &kernel_ptr[K##x##_MOUNT_PATCH]; */                                           \
   depth_limit_patch = &kernel_ptr[K##x##_DEPTH_LIMIT_PATCH];
+// clang-format on
 
 #define install_macro(x)                                                    \
   kernel_base = &((uint8_t *)__readmsr(0xC0000082))[-K##x##_XFAST_SYSCALL]; \
