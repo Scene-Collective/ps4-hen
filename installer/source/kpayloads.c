@@ -1,5 +1,6 @@
 #include <ps4.h>
 
+#include "config.h"
 #include "offsets.h"
 
 #include "kpayloads.h"
@@ -47,6 +48,7 @@ struct kpayload_payload_header {
 
 struct kpayload_payload_info {
   uint16_t fw_version;
+  struct configuration config;
   uint8_t *buffer;
   size_t size;
 };
@@ -296,6 +298,7 @@ static int kpayload_install_payload(struct thread *td, struct kpayload_install_p
   void (*pmap_protect)(void *pmap, uint64_t sva, uint64_t eva, uint8_t pr);
 
   uint16_t fw_version = args->kpayload_payload_info->fw_version;
+  struct configuration config = args->kpayload_payload_info->config;
 
   // NOTE: This is a C preprocessor macro
   build_kpayload(fw_version, install_macro);
@@ -345,10 +348,10 @@ static int kpayload_install_payload(struct thread *td, struct kpayload_install_p
   // Restore write protection
   writeCr0(cr0);
 
-  int (*payload_entrypoint)(uint16_t);
+  int (*payload_entrypoint)(uint16_t, struct configuration);
   *((void **)&payload_entrypoint) = (void *)(&payload_buffer[payload_header->entrypoint_offset]);
 
-  return payload_entrypoint(fw_version);
+  return payload_entrypoint(fw_version, config);
 }
 
 // HACK: Fix missing/bad/conflicting exploit patches for supported FWs //////////////////////////////////////////////////////
@@ -443,9 +446,10 @@ int install_patches() {
 }
 
 // Passes on the result of kpayload_install_payload
-int install_payload() {
+int install_payload(struct configuration *config) {
   struct kpayload_payload_info kpayload_payload_info;
   kpayload_payload_info.fw_version = get_firmware();
+  kpayload_payload_info.config = *config;
   kpayload_payload_info.buffer = (uint8_t *)kpayload_bin;
   kpayload_payload_info.size = (size_t)kpayload_bin_len;
 

@@ -11,7 +11,9 @@
 #define DEFAULT_BLOCK_UPDATES 1
 #define DEFAULT_DISABLE_ASLR 1
 #define DEFAULT_NOBD_PATCHES 0
-#define DEFAULT_UPLOAD_PRX 1
+#define DEFAULT_SKIP_PATCHES 0
+#define DEFAULT_UPLOAD_PRX 0
+#define DEFAULT_ENABLE_PLUGINS 0
 
 #define MATCH(n) strcmp(name, n) == 0
 
@@ -28,6 +30,7 @@ static void set_config_defaults(struct configuration *config) {
   config->disable_aslr = DEFAULT_DISABLE_ASLR;
   config->nobd_patches = DEFAULT_NOBD_PATCHES;
   config->upload_prx = DEFAULT_UPLOAD_PRX;
+  config->enable_plugins = DEFAULT_ENABLE_PLUGINS;
   // target_id is already zeroed by memset, which means no spoofing
 }
 
@@ -61,8 +64,12 @@ static int config_handler(void *config, const char *name, const char *value) {
     return set_bool_config("disable_aslr", value, &config_p->disable_aslr, DEFAULT_DISABLE_ASLR);
   } else if (MATCH("nobd_patches")) {
     return set_bool_config("nobd_patches", value, &config_p->nobd_patches, DEFAULT_NOBD_PATCHES);
+  } else if (MATCH("skip_patches")) {
+    return set_bool_config("skip_patches", value, &config_p->skip_patches, DEFAULT_SKIP_PATCHES);
   } else if (MATCH("upload_prx")) {
     return set_bool_config("upload_prx", value, &config_p->upload_prx, DEFAULT_UPLOAD_PRX);
+  } else if (MATCH("enable_plugins")) {
+    return set_bool_config("enable_plugins", value, &config_p->enable_plugins, DEFAULT_ENABLE_PLUGINS);
   } else if (MATCH("target_id")) {
     if (strlen(value) == 1 && value[0] == '0') {
       memset(config_p->target_id, '\0', sizeof(config_p->target_id));

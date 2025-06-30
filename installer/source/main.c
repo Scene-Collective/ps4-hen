@@ -141,7 +141,7 @@ int _main(struct thread *td) {
   }
 
   // Install and run kpayload
-  install_payload();
+  install_payload(&config);
 
   // Do this after the kpayload so if the user spoofs it doesn't affect checks in the kpayload
   if (config.target_id[0] != '\0') {

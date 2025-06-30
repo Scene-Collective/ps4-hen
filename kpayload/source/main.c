@@ -15,8 +15,23 @@
 #include "amd_helper.h"
 // clang-format on
 
+// configuration struct *MUST* match that in ../installer/include/config.h
+#define TARGET_ID_SIZE 4 // eg. 0x84
+struct configuration {
+  int exploit_fixes;
+  int mmap_patches;
+  int block_updates;
+  int disable_aslr;
+  int nobd_patches;
+  int skip_patches;
+  int upload_prx;
+  int enable_plugins;
+  char target_id[TARGET_ID_SIZE + 1]; // Add null term
+};
+
 uint16_t fw_version PAYLOAD_BSS = 0;
 const struct kpayload_offsets *fw_offsets PAYLOAD_BSS = NULL;
+struct configuration config PAYLOAD_BSS = {0};
 
 int (*memcmp)(const void *ptr1, const void *ptr2, size_t num) PAYLOAD_BSS;
 int (*_sx_xlock)(struct sx *sx, int opts, const char *file, int line) PAYLOAD_BSS;
@@ -344,20 +359,25 @@ PAYLOAD_CODE static void resolve_patterns(void) {
   writeCr0(cr0);
 }
 
-PAYLOAD_CODE int my_entrypoint(uint16_t fw_version_arg) {
+PAYLOAD_CODE int my_entrypoint(uint16_t fw_version_arg, struct configuration config_arg) {
   fw_version = fw_version_arg;
   fw_offsets = get_offsets_for_fw(fw_version);
   if (!fw_offsets) {
     return -1;
   }
   resolve_kdlsym();
+  memcpy(&config, &config_arg, sizeof(struct configuration));
   printf("Hello from KPayload: %i\n", fw_version);
   install_fself_hooks();
   install_fpkg_hooks();
-  install_patches();
-  resolve_patterns();
-  resolve_syscall();
-  install_syscall_hooks();
+  if (!config.skip_patches) {
+    install_patches();
+  }
+  if (config.enable_plugins) {
+    resolve_patterns();
+    resolve_syscall();
+    install_syscall_hooks();
+  }
 
   return 0;
 }
