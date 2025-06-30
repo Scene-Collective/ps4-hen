@@ -4,25 +4,25 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
-#include "elf_helper.h"
-#include "self_helper.h"
-#include "sbl_helper.h"
 #include "amd_helper.h"
+#include "elf_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
+#include "sbl_helper.h"
+#include "sections.h"
+#include "self_helper.h"
+#include "sparse.h"
 
 #include "hooks.h"
 
 #include "../../installer/include/path.h"
 
 extern char *(*strstr)(const char *haystack, const char *needle)PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-extern void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+extern void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 extern int (*printf)(const char *fmt, ...) PAYLOAD_BSS;
 
-extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p) PAYLOAD_BSS;
+extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p)PAYLOAD_BSS;
 extern void (*vmspace_free)(struct vmspace *vm) PAYLOAD_BSS;
 extern void (*vm_map_lock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern void (*vm_map_unlock_read)(struct vm_map *map) PAYLOAD_BSS;
@@ -212,7 +212,7 @@ PAYLOAD_CODE int sys_proc_vm_map_handle(struct proc *p, struct sys_proc_vm_map_a
       return -1;
     }
 
-    for (int i = 0; i < args->num; i++) {
+    for (uint64_t i = 0; i < args->num; i++) {
       args->maps[i].start = entry->start;
       args->maps[i].end = entry->end;
       args->maps[i].offset = entry->offset;
@@ -269,7 +269,7 @@ PAYLOAD_CODE int sys_dynlib_load_prx_hook(struct thread *td, struct dynlib_load_
   const char *titleid = td->td_proc->titleid;
   const char *p = args->prx_path ? args->prx_path : "";
   printf("%s td_name %s titleid %s prx %s\n", __FUNCTION__, td->td_name, titleid, p);
-  const uint8_t jmp[] = { 0xff, 0x25, 0x00, 0x00, 0x00, 0x00 };
+  const uint8_t jmp[] = {0xff, 0x25, 0x00, 0x00, 0x00, 0x00};
   if (strstr(p, "/app0/sce_module/libc.prx")) {
     const int handle_out = args->handle_out ? *args->handle_out : 0;
     struct dynlib_load_prx_args my_args = {};
@@ -282,7 +282,7 @@ PAYLOAD_CODE int sys_dynlib_load_prx_hook(struct thread *td, struct dynlib_load_
     uintptr_t plugin_load_ptr = 0;
     dlsym_wrap(td, handle, "plugin_load", &plugin_load_ptr);
     if (init_env_ptr && plugin_load_ptr) {
-      proc_rw_mem(td->td_proc, (void *)init_env_ptr, sizeof(jmp), jmp, 0, 1);
+      proc_rw_mem(td->td_proc, (void *)init_env_ptr, sizeof(jmp), (void *)jmp, 0, 1);
       proc_rw_mem(td->td_proc, (void *)(init_env_ptr + sizeof(jmp)), sizeof(plugin_load_ptr), &plugin_load_ptr, 0, 1);
     }
   } else if (strstr(p, "/common/lib/libSceSysmodule.sprx") && strstr(td->td_name, "ScePartyDaemonMain")) {
@@ -297,7 +297,7 @@ PAYLOAD_CODE int sys_dynlib_load_prx_hook(struct thread *td, struct dynlib_load_
     uintptr_t plugin_load_ptr = 0;
     dlsym_wrap(td, handle, "plugin_load", &plugin_load_ptr);
     if (init_env_ptr && plugin_load_ptr) {
-      proc_rw_mem(td->td_proc, (void *)init_env_ptr, sizeof(jmp), jmp, 0, 1);
+      proc_rw_mem(td->td_proc, (void *)init_env_ptr, sizeof(jmp), (void *)jmp, 0, 1);
       proc_rw_mem(td->td_proc, (void *)(init_env_ptr + sizeof(jmp)), sizeof(plugin_load_ptr), &plugin_load_ptr, 0, 1);
     }
     printf("%s init env 0x%lx plugin load 0x%lx\n", titleid, init_env_ptr, plugin_load_ptr);

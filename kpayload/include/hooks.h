@@ -1,12 +1,17 @@
+#ifndef HOOKS_H_
+#define HOOKS_H_
+
 // golden
 // 6/12/2018
-//
 
-#ifndef _HOOKS_H
-#define _HOOKS_H
+#include <stdint.h>
 
-// #include "proc.h"
-#include "elf.h"
+#include "freebsd_helper.h"
+// TODO: `ucred` is defined in the payload SDK.
+// Nothing from the payload SDK should be in kpayload
+
+// TODO: This is also from the payload SDK...
+#include <elf.h>
 
 TYPE_BEGIN(struct thread, 0x800); // XXX: random, don't use directly without fixing it
 TYPE_FIELD(struct mtx *volatile td_lock, 0);
@@ -54,14 +59,14 @@ struct sys_proc_rw_args {
 int sys_proc_rw(struct thread *td, struct sys_proc_rw_args *uap);
 
 // custom syscall 109
-#define SYS_PROC_ALLOC   1
-#define SYS_PROC_FREE    2
+#define SYS_PROC_ALLOC 1
+#define SYS_PROC_FREE 2
 #define SYS_PROC_PROTECT 3
-#define SYS_PROC_VM_MAP  4
+#define SYS_PROC_VM_MAP 4
 #define SYS_PROC_INSTALL 5
-#define SYS_PROC_CALL    6
-#define SYS_PROC_ELF     7
-#define SYS_PROC_INFO    8
+#define SYS_PROC_CALL 6
+#define SYS_PROC_ELF 7
+#define SYS_PROC_INFO 8
 #define SYS_PROC_THRINFO 9
 struct sys_proc_alloc_args {
   uint64_t address;
@@ -133,8 +138,8 @@ struct sys_kern_rw_args {
 int sys_kern_rw(struct thread *td, struct sys_kern_rw_args *uap);
 
 // custom syscall 112
-#define SYS_CONSOLE_CMD_REBOOT    1
-#define SYS_CONSOLE_CMD_PRINT     2
+#define SYS_CONSOLE_CMD_REBOOT 1
+#define SYS_CONSOLE_CMD_PRINT 2
 #define SYS_CONSOLE_CMD_JAILBREAK 3
 struct sys_console_cmd_args {
   uint64_t cmd;

@@ -1,15 +1,18 @@
-#ifndef __CCP_HELPER_H__
-#define __CCP_HELPER_H__
-#pragma once
+#ifndef CCP_HELPER_H_
+#define CCP_HELPER_H_
+
+#include <stdint.h>
+
+#include "freebsd_helper.h"
 
 #define CCP_MAX_PAYLOAD_SIZE 0x88
 #define CCP_OP(cmd) (cmd >> 24)
-#define CCP_OP_AES  0
-#define CCP_OP_XTS  2
+#define CCP_OP_AES 0
+#define CCP_OP_XTS 2
 #define CCP_OP_HMAC 9
-#define CCP_USE_KEY_FROM_SLOT    (1 << 18)
+#define CCP_USE_KEY_FROM_SLOT (1 << 18)
 #define CCP_GENERATE_KEY_AT_SLOT (1 << 19)
-#define CCP_USE_KEY_HANDLE       (1 << 20)
+#define CCP_USE_KEY_HANDLE (1 << 20)
 
 struct ccp_link {
   void *p;

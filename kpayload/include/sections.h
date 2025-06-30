@@ -1,6 +1,5 @@
-#ifndef __SECTIONS_H__
-#define __SECTIONS_H__
-#pragma once
+#ifndef SECTIONS_H_
+#define SECTIONS_H_
 
 #define PAYLOAD_DUMMY __attribute((section(".payload_dummy")))
 #define PAYLOAD_HEADER __attribute__((section(".payload_header")))

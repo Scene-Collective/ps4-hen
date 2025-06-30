@@ -1,17 +1,16 @@
-#ifndef __SELF_HELPER_H__
-#define __SELF_HELPER_H__
-#pragma once
+#ifndef SELF_HELPER_H_
+#define SELF_HELPER_H_
+
+#include <stdint.h>
+
+#include "freebsd_helper.h"
 
 #define SELF_DIGEST_SIZE 0x20
 #define SELF_CONTENT_ID_SIZE 0x13
 #define SELF_RANDOM_PAD_SIZE 0x0D
 #define SELF_MAX_HEADER_SIZE 0x4000
 
-enum self_format {
-  SELF_FORMAT_NONE,
-  SELF_FORMAT_ELF,
-  SELF_FORMAT_SELF,
-};
+enum self_format { SELF_FORMAT_NONE, SELF_FORMAT_ELF, SELF_FORMAT_SELF };
 
 #define SIZEOF_SELF_CONTEXT 0x60 // sceSblAuthMgrAuthHeader:bzero(sbl_authmgr_context, 0x60)
 

@@ -1,27 +1,27 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "amd_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
 #include "sections.h"
 #include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
-#include "amd_helper.h"
 
 extern uint16_t fw_version PAYLOAD_BSS;
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;
 
 extern int (*proc_rwmem)(struct proc *p, struct uio *uio) PAYLOAD_BSS;
-extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p) PAYLOAD_BSS;
+extern struct vmspace *(*vmspace_acquire_ref)(struct proc *p)PAYLOAD_BSS;
 extern void (*vmspace_free)(struct vmspace *vm) PAYLOAD_BSS;
 extern void (*vm_map_lock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern void (*vm_map_unlock_read)(struct vm_map *map) PAYLOAD_BSS;
 extern int (*vm_map_lookup_entry)(struct vm_map *map, uint64_t address, struct vm_map_entry **entries) PAYLOAD_BSS;
 
 extern size_t (*strlen)(const char *str) PAYLOAD_BSS;
-extern void *(*malloc)(unsigned long size, void *type, int flags) PAYLOAD_BSS;
+extern void *(*malloc)(unsigned long size, void *type, int flags)PAYLOAD_BSS;
 extern void (*free)(void *addr, void *type) PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-extern void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+extern void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 extern int (*memcmp)(const void *ptr1, const void *ptr2, size_t num) PAYLOAD_BSS;
 // Varies per FW
 extern void (*eventhandler_register_old)(void *list, const char *name, void *func, void *arg, int priority) PAYLOAD_BSS; // < 5.50
@@ -167,6 +167,7 @@ PAYLOAD_CODE int shellcore_patch(void) {
 
   int ret = 0;
 
+  // clang-format off
   uint32_t call_ofs_for__xor__eax_eax__jmp[] = {
     // call sceKernelIsGenuineCEX
     fw_offsets->sceKernelIsGenuineCEX_patch1,
@@ -179,6 +180,7 @@ PAYLOAD_CODE int shellcore_patch(void) {
     fw_offsets->nidf_libSceDipsw_patch3,
     fw_offsets->nidf_libSceDipsw_patch4,
   };
+  // clang-format on
 
   struct proc *ssc = proc_find_by_name("SceShellCore");
 
@@ -192,7 +194,7 @@ PAYLOAD_CODE int shellcore_patch(void) {
     goto error;
   }
 
-  for (int i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++) {
     if (entries[i].prot == (PROT_READ | PROT_EXEC)) {
       text_seg_base = (uint8_t *)entries[i].start;
       break;
@@ -205,61 +207,11 @@ PAYLOAD_CODE int shellcore_patch(void) {
   }
 
   // enable installing of debug packages
-  for (int i = 0; i < COUNT_OF(call_ofs_for__xor__eax_eax__jmp); i++) {
+  for (size_t i = 0; i < COUNT_OF(call_ofs_for__xor__eax_eax__jmp); i++) {
     ret = proc_write_mem(ssc, (void *)(text_seg_base + call_ofs_for__xor__eax_eax__jmp[i]), 4, "\x31\xC0\xEB\x01", &n);
     if (ret) {
       goto error;
     }
-  }
-
-  // enable fpkg for patches
-  // Varies per FW
-  const char *enable_fpkg_patch_data;
-  if (fw_version >= 500 && fw_version <= 620) {
-    enable_fpkg_patch_data = "\xE9\x96\x00\x00\x00";
-  } else if (fw_version >= 650 && fw_version <= 1202) {
-    enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
-  } else {
-    enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
-  }
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->enable_fpkg_patch), 5, (void *)enable_fpkg_patch_data, &n);
-  if (ret) {
-    goto error;
-  }
-
-  // this offset corresponds to "fake" string in the Shellcore's memory
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->fake_free_patch), 4, "free", &n);
-  if (ret) {
-    goto error;
-  }
-
-  ret = proc_write_mem(ssc, text_seg_base + fw_offsets->enable_data_mount_patch, 5, "\x31\xC0\xFF\xC0\x90", &n);
-  if (ret) {
-    goto error;
-  }
-
-  // enable ps vr without spoofer
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->enable_psvr_patch), 3, "\x31\xC0\xC3", &n);
-  if (ret) {
-    goto error;
-  }
-
-  // make pkgs installer working with external hdd
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->pkg_installer_patch), 1, "\x00", &n);
-  if (ret) {
-    goto error;
-  }
-
-  // enable support with 6.xx external hdd
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->ext_hdd_patch), 1, "\xEB", &n);
-  if (ret) {
-    goto error;
-  }
-
-  // enable debug trophies on retail
-  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->debug_trophies_patch), 4, "\x31\xC0\xEB\x01", &n);
-  if (ret) {
-    goto error;
   }
 
   // check_disc_root_param_patch
@@ -289,16 +241,75 @@ PAYLOAD_CODE int shellcore_patch(void) {
     goto error;
   }
 
+  // allow SceShellCore to mount /data into an app's sandbox
+  ret = proc_write_mem(ssc, text_seg_base + fw_offsets->enable_data_mount_patch, 5, "\x31\xC0\xFF\xC0\x90", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // enable ps vr without spoofer
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->enable_psvr_patch), 3, "\x31\xC0\xC3", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // enable fpkg for patches
+  // Varies per FW
+  const char *enable_fpkg_patch_data;
+  if (fw_version >= 500 && fw_version <= 620) {
+    enable_fpkg_patch_data = "\xE9\x96\x00\x00\x00";
+  } else if (fw_version >= 650 && fw_version <= 1202) {
+    enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
+  } else {
+    enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
+  }
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->enable_fpkg_patch), 5, (void *)enable_fpkg_patch_data, &n);
+  if (ret) {
+    goto error;
+  }
+
+  // this offset corresponds to "fake" string in the SceShellCore's memory
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->fake_free_patch), 4, "free", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // make pkgs installer working with external hdd
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->pkg_installer_patch), 1, "\x00", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // enable support with 6.xx external hdd
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->ext_hdd_patch), 1, "\xEB", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // enable debug trophies on retail
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->debug_trophies_patch), 4, "\x31\xC0\xEB\x01", &n);
+  if (ret) {
+    goto error;
+  }
+
+  // never disable screenshot
+  ret = proc_write_mem(ssc, (void *)(text_seg_base + fw_offsets->disable_screenshot_patch), 2, "\xEB\x03", &n);
+  if (ret) {
+    goto error;
+  }
+
 error:
-  if (entries)
+  if (entries) {
     dealloc(entries);
+  }
 
   return ret;
 }
 
 PAYLOAD_CODE int shellui_patch(void) {
-  uint8_t *libkernel_sys_base = NULL, *executable_base = NULL, *app_base = NULL;
-
+  uint8_t *libkernel_sys_base = NULL;
+  uint8_t *executable_base = NULL;
+  uint8_t *app_base = NULL;
   size_t n;
 
   struct proc_vm_map_entry *entries = NULL;
@@ -306,26 +317,19 @@ PAYLOAD_CODE int shellui_patch(void) {
 
   int ret = 0;
 
-  uint32_t ofs_to_ret_1[] = {
-    fw_offsets->sceSblRcMgrIsAllowDebugMenuForSettings_patch,
-    fw_offsets->sceSblRcMgrIsStoreMode_patch,
-  };
+  struct proc *ssu = proc_find_by_name("SceShellUI");
 
-  uint8_t mov__eax_1__ret[6] = {0xB8, 0x01, 0x00, 0x00, 0x00, 0xC3};
-
-  struct proc *ssui = proc_find_by_name("SceShellUI");
-
-  if (!ssui) {
+  if (!ssu) {
     ret = -1;
     goto error;
   }
 
-  ret = proc_get_vm_map(ssui, &entries, &num_entries);
+  ret = proc_get_vm_map(ssu, &entries, &num_entries);
   if (ret) {
     goto error;
   }
 
-  for (int i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++) {
     if (!memcmp(entries[i].name, "executable", 10) && (entries[i].prot >= (PROT_READ | PROT_EXEC))) {
       executable_base = (uint8_t *)entries[i].start;
       break;
@@ -338,12 +342,12 @@ PAYLOAD_CODE int shellui_patch(void) {
   }
 
   // disable CreateUserForIDU
-  ret = proc_write_mem(ssui, (void *)(executable_base + fw_offsets->CreateUserForIDU_patch), 4, "\x48\x31\xC0\xC3", &n);
+  ret = proc_write_mem(ssu, (void *)(executable_base + fw_offsets->CreateUserForIDU_patch), 4, "\x48\x31\xC0\xC3", &n);
   if (ret) {
     goto error;
   }
 
-  for (int i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++) {
     if (!memcmp(entries[i].name, "app.exe.sprx", 12) && (entries[i].prot >= (PROT_READ | PROT_EXEC))) {
       app_base = (uint8_t *)entries[i].start;
       break;
@@ -371,12 +375,12 @@ PAYLOAD_CODE int shellui_patch(void) {
   } else {
     remote_play_patch_data = "\xE9\x5C\x02\x00\x00";
   }
-  ret = proc_write_mem(ssui, (void *)(app_base + fw_offsets->remote_play_menu_patch), 5, (void *)remote_play_patch_data, &n);
+  ret = proc_write_mem(ssu, (void *)(app_base + fw_offsets->remote_play_menu_patch), 5, (void *)remote_play_patch_data, &n);
   if (ret) {
     goto error;
   }
 
-  for (int i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++) {
     if (!memcmp(entries[i].name, "libkernel_sys.sprx", 18) && (entries[i].prot >= (PROT_READ | PROT_EXEC))) {
       libkernel_sys_base = (uint8_t *)entries[i].start;
       break;
@@ -389,11 +393,14 @@ PAYLOAD_CODE int shellui_patch(void) {
   }
 
   // enable debug settings menu
-  for (int i = 0; i < COUNT_OF(ofs_to_ret_1); i++) {
-    ret = proc_write_mem(ssui, (void *)(libkernel_sys_base + ofs_to_ret_1[i]), sizeof(mov__eax_1__ret), mov__eax_1__ret, &n);
-    if (ret) {
-      goto error;
-    }
+  ret = proc_write_mem(ssu, (void *)(libkernel_sys_base + fw_offsets->sceSblRcMgrIsAllowDebugMenuForSettings_patch), 6, "\xB8\x01\x00\x00\x00\xC3", &n);
+  if (ret) {
+    goto error;
+  }
+
+  ret = proc_write_mem(ssu, (void *)(libkernel_sys_base + fw_offsets->sceSblRcMgrIsStoreMode_patch), 6, "\xB8\x01\x00\x00\x00\xC3", &n);
+  if (ret) {
+    goto error;
   }
 
 error:
@@ -425,7 +432,7 @@ PAYLOAD_CODE int remoteplay_patch(void) {
     goto error;
   }
 
-  for (int i = 0; i < num_entries; i++) {
+  for (size_t i = 0; i < num_entries; i++) {
     if (!memcmp(entries[i].name, "executable", 10) && (entries[i].prot == (PROT_READ | PROT_EXEC))) {
       executable_base = (uint8_t *)entries[i].start;
       break;
@@ -456,31 +463,6 @@ error:
   return ret;
 }
 
-PAYLOAD_CODE void set_dipsw(int debug_patch) {
-  uint64_t kernbase = getkernbase(fw_offsets->XFAST_SYSCALL_addr);
-
-  uint64_t cr0 = readCr0();
-  writeCr0(cr0 & ~X86_CR0_WP);
-  uint64_t flags = intr_disable();
-
-  uint8_t *dipsw = (uint8_t *)(kernbase + fw_offsets->DIPSW_addr);
-  dipsw[0x36] = debug_patch ? 0x37 : 0x24;
-  dipsw[0x59] = debug_patch ? 0x03 : 0x00;
-  dipsw[0x5A] = debug_patch ? 0x01 : 0x00;
-  dipsw[0x78] = debug_patch ? 0x01 : 0x00;
-
-  intr_restore(flags);
-  writeCr0(cr0);
-}
-
-PAYLOAD_CODE void patch_debug_dipsw() {
-  set_dipsw(1);
-}
-
-PAYLOAD_CODE void restore_retail_dipsw() {
-  set_dipsw(0);
-}
-
 PAYLOAD_CODE void apply_patches() {
   shellui_patch();
   remoteplay_patch();
@@ -492,10 +474,10 @@ PAYLOAD_CODE void install_patches() {
 
   // Varies per FW
   if (fw_version <= 550) {
-    // eventhandler_register_old(NULL, "system_suspend_phase3", &restore_retail_dipsw, NULL, EVENTHANDLER_PRI_PRE_FIRST); // < 5.50
+    // eventhandler_register_old(NULL, "system_suspend_phase3", &function_name, NULL, EVENTHANDLER_PRI_PRE_FIRST); // < 5.50
     eventhandler_register_old(NULL, "system_resume_phase4", &apply_patches, NULL, EVENTHANDLER_PRI_LAST); // < 5.50
   } else {
-    // eventhandler_register(NULL, "system_suspend_phase3", &restore_retail_dipsw, "hen_resume_patches", NULL, EVENTHANDLER_PRI_PRE_FIRST); // 5.50+ (Any changes after 6.72?)
+    // eventhandler_register(NULL, "system_suspend_phase3", &function_name, "hen_resume_patches", NULL, EVENTHANDLER_PRI_PRE_FIRST); // 5.50+ (Any changes after 6.72?)
     eventhandler_register(NULL, "system_resume_phase4", &apply_patches, "hen_resume_patches", NULL, EVENTHANDLER_PRI_LAST); // 5.50+ (Any changes after 6.72?)
   }
 }

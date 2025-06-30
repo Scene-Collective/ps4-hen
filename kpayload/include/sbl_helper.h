@@ -1,6 +1,9 @@
-#ifndef __SBL_HELPER_H__
-#define __SBL_HELPER_H__
-#pragma once
+#ifndef SBL_HELPER_H_
+#define SBL_HELPER_H_
+
+#include <stdint.h>
+
+#include "freebsd_helper.h"
 
 #define SCE_SBL_ERROR_NPDRM_ENOTSUP 0x800F0A25
 #define SIZEOF_SBL_KEY_RBTREE_ENTRY 0xA8 // sceSblKeymgrSetKey

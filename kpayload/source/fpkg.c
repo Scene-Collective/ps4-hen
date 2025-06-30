@@ -1,15 +1,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
+#include "amd_helper.h"
+#include "ccp_helper.h"
 #include "freebsd_helper.h"
-#include "sbl_helper.h"
+#include "offsets.h"
 #include "pfs_helper.h"
 #include "rif_helper.h"
-#include "ccp_helper.h"
-#include "amd_helper.h"
+#include "sbl_helper.h"
+#include "sections.h"
+#include "sparse.h"
 
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;
 
@@ -17,8 +17,8 @@ extern int (*_sx_xlock)(struct sx *sx, int opts, const char *file, int line) PAY
 extern int (*_sx_xunlock)(struct sx *sx) PAYLOAD_BSS;
 extern int (*fpu_kern_enter)(struct thread *td, struct fpu_kern_ctx *ctx, uint32_t flags) PAYLOAD_BSS;
 extern int (*fpu_kern_leave)(struct thread *td, struct fpu_kern_ctx *ctx) PAYLOAD_BSS;
-extern void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-extern void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+extern void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+extern void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 
 extern struct sbl_map_list_entry **SBL_DRIVER_MAPPED_PAGES PAYLOAD_BSS;
 extern struct sx *SBL_PFS_SX PAYLOAD_BSS;
@@ -43,6 +43,8 @@ extern int my_sceSblKeymgrSmCallfunc_npdrm_decrypt_isolated_rif(union keymgr_pay
 extern int my_sceSblKeymgrSmCallfunc_npdrm_decrypt_rif_new(union keymgr_payload *payload) PAYLOAD_CODE;
 extern int my_sceSblKeymgrSetKeyStorage__sceSblDriverSendMsg(struct sbl_msg *msg, size_t size) PAYLOAD_CODE;
 extern int my_mountpfs__sceSblPfsSetKeys(uint32_t *ekh, uint32_t *skh, uint8_t *eekpfs, struct ekc *eekc, unsigned int pubkey_ver, unsigned int key_ver, struct pfs_header *hdr, size_t hdr_size, unsigned int type, unsigned int finalized, unsigned int is_disc) PAYLOAD_CODE;
+
+// clang-format off
 
 static const uint8_t s_ypkg_p[0x80] PAYLOAD_RDATA = {
   0x2D, 0xE8, 0xB4, 0x65, 0xBE, 0x05, 0x78, 0x6A, 0x89, 0x31, 0xC9, 0x5A, 0x44, 0xDE, 0x50, 0xC1,
@@ -108,6 +110,8 @@ static const uint8_t s_fake_key_seed[0x10] PAYLOAD_RDATA = {
   0x46, 0x41, 0x4B, 0x45, 0x46, 0x41, 0x4B, 0x45, 0x46, 0x41, 0x4B, 0x45, 0x46, 0x41, 0x4B, 0x45,
 };
 
+// clang-format on
+
 // a common function to generate a final key for PFS
 PAYLOAD_CODE static inline void pfs_gen_crypto_key(uint8_t *ekpfs, uint8_t seed[PFS_SEED_SIZE], unsigned int index, uint8_t key[PFS_FINAL_KEY_SIZE]) {
   struct thread *td = curthread();
@@ -130,12 +134,13 @@ PAYLOAD_CODE static inline void pfs_generate_enc_key(uint8_t *ekpfs, uint8_t see
   pfs_gen_crypto_key(ekpfs, seed, 1, key);
 }
 
-// asigning key generator based on EKPFS and PFS header seed
+// assigning key generator based on EKPFS and PFS header seed
 PAYLOAD_CODE static inline void pfs_generate_sign_key(uint8_t *ekpfs, uint8_t seed[PFS_SEED_SIZE], uint8_t key[PFS_FINAL_KEY_SIZE]) {
   pfs_gen_crypto_key(ekpfs, seed, 2, key);
 }
 
 PAYLOAD_CODE static inline int npdrm_decrypt_debug_rif(unsigned int type, uint8_t *data) {
+  (void)(type); // UNUSED(type);
   struct thread *td = curthread();
   int ret;
 

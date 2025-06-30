@@ -1,6 +1,9 @@
-#ifndef __AMD_HELPER_H__
-#define __AMD_HELPER_H__
-#pragma once
+#ifndef AMD_HELPER_H_
+#define AMD_HELPER_H_
+
+#include <stdint.h>
+
+#include "sections.h"
 
 PAYLOAD_CODE static inline __attribute__((always_inline)) uint64_t __readmsr(unsigned long __register) {
   unsigned long __edx;

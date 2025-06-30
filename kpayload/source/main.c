@@ -1,31 +1,46 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
+#include "amd_helper.h"
+#include "ccp_helper.h"
 #include "elf_helper.h"
-#include "self_helper.h"
-#include "sbl_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
 #include "pfs_helper.h"
 #include "rif_helper.h"
-#include "ccp_helper.h"
-#include "amd_helper.h"
+#include "sbl_helper.h"
+#include "sections.h"
+#include "self_helper.h"
+#include "sparse.h"
+
+// configuration struct *MUST* match that in ../installer/include/config.h
+#define TARGET_ID_SIZE 4 // eg. 0x84
+struct configuration {
+  int exploit_fixes;
+  int mmap_patches;
+  int block_updates;
+  int disable_aslr;
+  int nobd_patches;
+  int skip_patches;
+  int upload_prx;
+  int enable_plugins;
+  char target_id[TARGET_ID_SIZE + 1]; // Add null term
+};
 
 uint16_t fw_version PAYLOAD_BSS = 0;
 const struct kpayload_offsets *fw_offsets PAYLOAD_BSS = NULL;
+struct configuration config PAYLOAD_BSS = {0};
 
 int (*memcmp)(const void *ptr1, const void *ptr2, size_t num) PAYLOAD_BSS;
 int (*_sx_xlock)(struct sx *sx, int opts, const char *file, int line) PAYLOAD_BSS;
 int (*_sx_xunlock)(struct sx *sx) PAYLOAD_BSS;
-void *(*malloc)(unsigned long size, void *type, int flags) PAYLOAD_BSS;
+void *(*malloc)(unsigned long size, void *type, int flags)PAYLOAD_BSS;
 void (*free)(void *addr, void *type) PAYLOAD_BSS;
-char *(*strstr)(const char *haystack, const char *needle) PAYLOAD_BSS;
+char *(*strstr)(const char *haystack, const char *needle)PAYLOAD_BSS;
 int (*fpu_kern_enter)(struct thread *td, struct fpu_kern_ctx *ctx, uint32_t flags) PAYLOAD_BSS;
 int (*fpu_kern_leave)(struct thread *td, struct fpu_kern_ctx *ctx) PAYLOAD_BSS;
-void *(*memcpy)(void *dst, const void *src, size_t len) PAYLOAD_BSS;
-void *(*memset)(void *s, int c, size_t n) PAYLOAD_BSS;
+void *(*memcpy)(void *dst, const void *src, size_t len)PAYLOAD_BSS;
+void *(*memset)(void *s, int c, size_t n)PAYLOAD_BSS;
 size_t (*strlen)(const char *str) PAYLOAD_BSS;
 int (*printf)(const char *fmt, ...) PAYLOAD_BSS;
 // Varies per FW
@@ -76,7 +91,7 @@ extern int my_sceSblKeymgrSetKeyStorage__sceSblDriverSendMsg(struct sbl_msg *msg
 extern int my_mountpfs__sceSblPfsSetKeys(uint32_t *ekh, uint32_t *skh, uint8_t *eekpfs, struct ekc *eekc, unsigned int pubkey_ver, unsigned int key_ver, struct pfs_header *hdr, size_t hdr_size, unsigned int type, unsigned int finalized, unsigned int is_disc) PAYLOAD_CODE;
 
 // Patch
-struct vmspace *(*vmspace_acquire_ref)(struct proc *p) PAYLOAD_BSS;
+struct vmspace *(*vmspace_acquire_ref)(struct proc *p)PAYLOAD_BSS;
 void (*vmspace_free)(struct vmspace *vm) PAYLOAD_BSS;
 void (*vm_map_lock_read)(struct vm_map *map) PAYLOAD_BSS;
 void (*vm_map_unlock_read)(struct vm_map *map) PAYLOAD_BSS;
@@ -342,20 +357,25 @@ PAYLOAD_CODE static void resolve_patterns(void) {
   writeCr0(cr0);
 }
 
-PAYLOAD_CODE int my_entrypoint(uint16_t fw_version_arg) {
+PAYLOAD_CODE int my_entrypoint(uint16_t fw_version_arg, struct configuration config_arg) {
   fw_version = fw_version_arg;
   fw_offsets = get_offsets_for_fw(fw_version);
   if (!fw_offsets) {
     return -1;
   }
   resolve_kdlsym();
+  memcpy(&config, &config_arg, sizeof(struct configuration));
   printf("Hello from KPayload: %i\n", fw_version);
   install_fself_hooks();
   install_fpkg_hooks();
-  install_patches();
-  resolve_patterns();
-  resolve_syscall();
-  install_syscall_hooks();
+  if (!config.skip_patches) {
+    install_patches();
+  }
+  if (config.enable_plugins) {
+    resolve_patterns();
+    resolve_syscall();
+    install_syscall_hooks();
+  }
 
   return 0;
 }
@@ -364,8 +384,8 @@ struct {
   uint64_t signature;
   void *entrypoint;
 } payload_header PAYLOAD_HEADER = {
-  0x5041594C4F414458ull, // `payloadx`
-  &my_entrypoint,
+    0x5041594C4F414458ull, // `payloadx`
+    &my_entrypoint,
 };
 
 int _start() {

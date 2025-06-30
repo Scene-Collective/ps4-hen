@@ -1,7 +1,11 @@
-#pragma once
+#ifndef OFFSETS_H_
+#define OFFSETS_H_
+
 #include <stdint.h>
 
 #include "sections.h"
+
+// clang-format off
 
 struct kpayload_offsets {
   // data
@@ -16,7 +20,6 @@ struct kpayload_offsets {
   uint32_t SBL_KEYMGR_BUF_VA_addr;
   uint32_t SBL_KEYMGR_BUF_GVA_addr;
   uint32_t FPU_CTX_addr;
-  uint32_t DIPSW_addr;
   uint32_t SYSENT_addr;
 
   // common
@@ -133,3 +136,7 @@ struct kpayload_offsets {
 
 // Lookup function: implemented elsewhere
 PAYLOAD_CODE const struct kpayload_offsets *get_offsets_for_fw(uint16_t fw_version);
+
+// clang-format on
+
+#endif
