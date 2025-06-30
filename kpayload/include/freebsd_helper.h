@@ -3,10 +3,9 @@
 
 #include <stddef.h>
 #include <stdint.h>
-// TODO: `thread`, ucred`, and `filedesc` are defined in the payload SDK.
-// Nothing from the payload SDK should be in kpayload
 
 #include "sparse.h"
+// TODO: Where are `ucred`, `filedesc`, and `thread` defined?
 
 #define EVENTHANDLER_PRI_PRE_FIRST -10000
 #define EVENTHANDLER_PRI_LAST 20000

@@ -13,19 +13,7 @@
 #include "self_helper.h"
 #include "sparse.h"
 
-// configuration struct *MUST* match that in ../installer/include/config.h
-#define TARGET_ID_SIZE 4 // eg. 0x84
-struct configuration {
-  int exploit_fixes;
-  int mmap_patches;
-  int block_updates;
-  int disable_aslr;
-  int nobd_patches;
-  int skip_patches;
-  int upload_prx;
-  int enable_plugins;
-  char target_id[TARGET_ID_SIZE + 1]; // Add null term
-};
+#include "../../installer/include/config_struct.h"
 
 uint16_t fw_version PAYLOAD_BSS = 0;
 const struct kpayload_offsets *fw_offsets PAYLOAD_BSS = NULL;

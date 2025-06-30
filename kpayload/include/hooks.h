@@ -4,14 +4,11 @@
 // golden
 // 6/12/2018
 
+#include <elf.h>
 #include <stdint.h>
 
 #include "freebsd_helper.h"
-// TODO: `ucred` is defined in the payload SDK.
-// Nothing from the payload SDK should be in kpayload
-
-// TODO: This is also from the payload SDK...
-#include <elf.h>
+// TODO: Where is `ucred` defined?
 
 TYPE_BEGIN(struct thread, 0x800); // XXX: random, don't use directly without fixing it
 TYPE_FIELD(struct mtx *volatile td_lock, 0);

@@ -1,6 +1,6 @@
 #include <ps4.h>
 
-#include "config.h"
+#include "config_struct.h"
 #include "offsets.h"
 
 #include "kpayloads.h"
