@@ -6,8 +6,6 @@
 #include "pfs_helper.h"
 #include "sparse.h"
 
-// clang-format off
-
 #define RIF_DIGEST_SIZE 0x10
 #define RIF_DATA_SIZE 0x90
 #define RIF_KEY_TABLE_SIZE 0x230
@@ -104,7 +102,5 @@ union keymgr_request {
     int status;
   } decrypt_entire_rif;
 };
-
-// clang-format on
 
 #endif

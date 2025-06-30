@@ -5,8 +5,6 @@
 
 #include "sections.h"
 
-// clang-format off
-
 PAYLOAD_CODE static inline __attribute__((always_inline)) uint64_t __readmsr(unsigned long __register) {
   unsigned long __edx;
   unsigned long __eax;
@@ -53,7 +51,5 @@ PAYLOAD_CODE static inline __attribute__((always_inline)) void intr_restore(uint
 PAYLOAD_CODE static inline __attribute__((always_inline)) uint64_t getkernbase(uint64_t xfast_syscall_offset) {
   return (__readmsr(0xC0000082) - xfast_syscall_offset);
 }
-
-// clang-format on
 
 #endif

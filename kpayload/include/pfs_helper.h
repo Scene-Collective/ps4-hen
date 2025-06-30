@@ -5,8 +5,6 @@
 
 #include "sparse.h"
 
-// clang-format off
-
 #define EKPFS_SIZE 0x20
 #define EEKPFS_SIZE 0x100
 #define PFS_SEED_SIZE 0x10
@@ -63,7 +61,5 @@ struct rsa_buffer {
 TYPE_BEGIN(struct pfs_header, SIZEOF_PFS_HEADER);
 TYPE_FIELD(uint8_t crypt_seed[0x10], 0x370);
 TYPE_END();
-
-// clang-format on
 
 #endif

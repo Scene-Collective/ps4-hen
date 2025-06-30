@@ -5,18 +5,12 @@
 
 #include "freebsd_helper.h"
 
-// clang-format off
-
 #define SELF_DIGEST_SIZE 0x20
 #define SELF_CONTENT_ID_SIZE 0x13
 #define SELF_RANDOM_PAD_SIZE 0x0D
 #define SELF_MAX_HEADER_SIZE 0x4000
 
-enum self_format {
-  SELF_FORMAT_NONE,
-  SELF_FORMAT_ELF,
-  SELF_FORMAT_SELF,
-};
+enum self_format { SELF_FORMAT_NONE, SELF_FORMAT_ELF, SELF_FORMAT_SELF };
 
 #define SIZEOF_SELF_CONTEXT 0x60 // sceSblAuthMgrAuthHeader:bzero(sbl_authmgr_context, 0x60)
 
@@ -84,7 +78,5 @@ TYPE_BEGIN(struct self_fake_auth_info, SIZEOF_SELF_FAKE_AUTH_INFO);
 TYPE_FIELD(uint64_t size, 0x00);
 TYPE_FIELD(struct self_auth_info info, 0x08);
 TYPE_END();
-
-// clang-format on
 
 #endif

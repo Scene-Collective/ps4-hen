@@ -5,8 +5,6 @@
 
 #include "freebsd_helper.h"
 
-// clang-format off
-
 #define SCE_SBL_ERROR_NPDRM_ENOTSUP 0x800F0A25
 #define SIZEOF_SBL_KEY_RBTREE_ENTRY 0xA8 // sceSblKeymgrSetKey
 #define SIZEOF_SBL_MAP_LIST_ENTRY 0x50 // sceSblDriverMapPages
@@ -65,7 +63,5 @@ TYPE_FIELD(unsigned long flags, 0x38);
 TYPE_FIELD(struct proc *proc, 0x40);
 TYPE_FIELD(void *vm_page, 0x48);
 TYPE_END();
-
-// clang-format on
 
 #endif

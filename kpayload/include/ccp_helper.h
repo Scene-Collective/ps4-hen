@@ -5,16 +5,14 @@
 
 #include "freebsd_helper.h"
 
-// clang-format off
-
 #define CCP_MAX_PAYLOAD_SIZE 0x88
 #define CCP_OP(cmd) (cmd >> 24)
-#define CCP_OP_AES  0
-#define CCP_OP_XTS  2
+#define CCP_OP_AES 0
+#define CCP_OP_XTS 2
 #define CCP_OP_HMAC 9
-#define CCP_USE_KEY_FROM_SLOT    (1 << 18)
+#define CCP_USE_KEY_FROM_SLOT (1 << 18)
 #define CCP_GENERATE_KEY_AT_SLOT (1 << 19)
-#define CCP_USE_KEY_HANDLE       (1 << 20)
+#define CCP_USE_KEY_HANDLE (1 << 20)
 
 struct ccp_link {
   void *p;
@@ -77,7 +75,5 @@ struct sbl_msg {
     uint8_t raw[0x1000];
   };
 };
-
-// clang-format on
 
 #endif

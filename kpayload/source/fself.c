@@ -1,16 +1,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// clang-format off
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
-#include "elf_helper.h"
-#include "self_helper.h"
-#include "sbl_helper.h"
 #include "amd_helper.h"
-// clang-format on
+#include "elf_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
+#include "sbl_helper.h"
+#include "sections.h"
+#include "self_helper.h"
+#include "sparse.h"
 
 #define PAGE_SIZE 0x4000
 

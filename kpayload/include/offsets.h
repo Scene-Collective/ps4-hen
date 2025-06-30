@@ -1,11 +1,11 @@
 #ifndef OFFSETS_H_
 #define OFFSETS_H_
 
-// clang-format off
-
 #include <stdint.h>
 
 #include "sections.h"
+
+// clang-format off
 
 struct kpayload_offsets {
   // data

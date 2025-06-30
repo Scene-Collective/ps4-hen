@@ -168,7 +168,6 @@ PAYLOAD_CODE int shellcore_patch(void) {
   int ret = 0;
 
   // clang-format off
-
   uint32_t call_ofs_for__xor__eax_eax__jmp[] = {
     // call sceKernelIsGenuineCEX
     fw_offsets->sceKernelIsGenuineCEX_patch1,
@@ -181,7 +180,6 @@ PAYLOAD_CODE int shellcore_patch(void) {
     fw_offsets->nidf_libSceDipsw_patch3,
     fw_offsets->nidf_libSceDipsw_patch4,
   };
-
   // clang-format on
 
   struct proc *ssc = proc_find_by_name("SceShellCore");

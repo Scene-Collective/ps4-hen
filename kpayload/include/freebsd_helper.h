@@ -8,20 +8,18 @@
 
 #include "sparse.h"
 
-// clang-format off
-
 #define EVENTHANDLER_PRI_PRE_FIRST -10000
-#define EVENTHANDLER_PRI_LAST      20000
+#define EVENTHANDLER_PRI_LAST 20000
 
-#define ESRCH   3
-#define ENOMEM  12
-#define EINVAL  22
+#define ESRCH 3
+#define ENOMEM 12
+#define EINVAL 22
 #define ENOTSUP 45
 
-#define PROT_READ  0x1 // Page can be read
+#define PROT_READ 0x1 // Page can be read
 #define PROT_WRITE 0x2 // Page can be written
-#define PROT_EXEC  0x4 // Page can be executed
-#define PROT_NONE  0x0 // Page can not be accessed
+#define PROT_EXEC 0x4 // Page can be executed
+#define PROT_NONE 0x0 // Page can not be accessed
 
 #define TRACEBUF struct qm_trace trace;
 
@@ -91,15 +89,11 @@ typedef uint64_t vm_offset_t;
 
 struct fpu_kern_ctx;
 
-enum uio_rw {
-  UIO_READ,
-  UIO_WRITE,
-};
+enum uio_rw { UIO_READ, UIO_WRITE };
 
-enum uio_seg {
-  UIO_USERSPACE, // from user data space
-  UIO_SYSSPACE,  // from system space
-  UIO_USERISPACE // from user I space
+enum uio_seg { UIO_USERSPACE, // from user data space
+               UIO_SYSSPACE,  // from system space
+               UIO_USERISPACE // from user I space
 };
 
 struct iovec {
@@ -166,7 +160,5 @@ TYPE_FIELD(char contentid[64], 0x3D4);
 TYPE_FIELD(char path[64], 0x474);
 
 TYPE_END();
-
-// clang-format on
 
 #endif

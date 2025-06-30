@@ -1,8 +1,6 @@
 #ifndef SPARSE_H_
 #define SPARSE_H_
 
-// clang-format off
-
 #define JOIN_HELPER(x, y) x##y
 #define JOIN(x, y) JOIN_HELPER(x, y)
 
@@ -37,7 +35,5 @@
   do {                                                 \
     *(uint32_t *)(k + src + 1) = (dest - src - k - 5); \
   } while (0);
-
-// clang-format on
 
 #endif

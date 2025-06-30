@@ -4,8 +4,6 @@
 // golden
 // 6/12/2018
 
-// clang-format off
-
 #include <stdint.h>
 
 #include "freebsd_helper.h"
@@ -61,14 +59,14 @@ struct sys_proc_rw_args {
 int sys_proc_rw(struct thread *td, struct sys_proc_rw_args *uap);
 
 // custom syscall 109
-#define SYS_PROC_ALLOC   1
-#define SYS_PROC_FREE    2
+#define SYS_PROC_ALLOC 1
+#define SYS_PROC_FREE 2
 #define SYS_PROC_PROTECT 3
-#define SYS_PROC_VM_MAP  4
+#define SYS_PROC_VM_MAP 4
 #define SYS_PROC_INSTALL 5
-#define SYS_PROC_CALL    6
-#define SYS_PROC_ELF     7
-#define SYS_PROC_INFO    8
+#define SYS_PROC_CALL 6
+#define SYS_PROC_ELF 7
+#define SYS_PROC_INFO 8
 #define SYS_PROC_THRINFO 9
 struct sys_proc_alloc_args {
   uint64_t address;
@@ -140,8 +138,8 @@ struct sys_kern_rw_args {
 int sys_kern_rw(struct thread *td, struct sys_kern_rw_args *uap);
 
 // custom syscall 112
-#define SYS_CONSOLE_CMD_REBOOT    1
-#define SYS_CONSOLE_CMD_PRINT     2
+#define SYS_CONSOLE_CMD_REBOOT 1
+#define SYS_CONSOLE_CMD_PRINT 2
 #define SYS_CONSOLE_CMD_JAILBREAK 3
 struct sys_console_cmd_args {
   uint64_t cmd;
@@ -165,7 +163,5 @@ struct dynlib_dlsym_args {
   const char *symbol;
   uintptr_t *symbol_ptr;
 };
-
-// clang-format on
 
 #endif
