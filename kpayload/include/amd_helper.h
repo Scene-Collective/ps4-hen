@@ -1,6 +1,10 @@
 #ifndef AMD_HELPER_H_
 #define AMD_HELPER_H_
 
+#include <stdint.h>
+
+#include "sections.h"
+
 // clang-format off
 
 PAYLOAD_CODE static inline __attribute__((always_inline)) uint64_t __readmsr(unsigned long __register) {

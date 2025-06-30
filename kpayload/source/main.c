@@ -1,19 +1,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// clang-format off
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
+#include "amd_helper.h"
+#include "ccp_helper.h"
 #include "elf_helper.h"
-#include "self_helper.h"
-#include "sbl_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
 #include "pfs_helper.h"
 #include "rif_helper.h"
-#include "ccp_helper.h"
-#include "amd_helper.h"
-// clang-format on
+#include "sbl_helper.h"
+#include "sections.h"
+#include "self_helper.h"
+#include "sparse.h"
 
 // configuration struct *MUST* match that in ../installer/include/config.h
 #define TARGET_ID_SIZE 4 // eg. 0x84

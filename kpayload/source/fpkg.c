@@ -1,17 +1,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// clang-format off
-#include "sections.h"
-#include "sparse.h"
-#include "offsets.h"
+#include "amd_helper.h"
+#include "ccp_helper.h"
 #include "freebsd_helper.h"
-#include "sbl_helper.h"
+#include "offsets.h"
 #include "pfs_helper.h"
 #include "rif_helper.h"
-#include "ccp_helper.h"
-#include "amd_helper.h"
-// clang-format on
+#include "sbl_helper.h"
+#include "sections.h"
+#include "sparse.h"
 
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;
 

@@ -1,6 +1,8 @@
 #ifndef ELF_HELPER_H_
 #define ELF_HELPER_H_
 
+#include <stdint.h>
+
 // clang-format off
 
 #define ELF_IDENT_SIZE 0x10

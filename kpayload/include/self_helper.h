@@ -1,6 +1,10 @@
 #ifndef SELF_HELPER_H_
 #define SELF_HELPER_H_
 
+#include <stdint.h>
+
+#include "freebsd_helper.h"
+
 // clang-format off
 
 #define SELF_DIGEST_SIZE 0x20

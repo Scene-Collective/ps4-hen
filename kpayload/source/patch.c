@@ -1,13 +1,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// clang-format off
+#include "amd_helper.h"
+#include "freebsd_helper.h"
+#include "offsets.h"
 #include "sections.h"
 #include "sparse.h"
-#include "offsets.h"
-#include "freebsd_helper.h"
-#include "amd_helper.h"
-// clang-format on
 
 extern uint16_t fw_version PAYLOAD_BSS;
 extern const struct kpayload_offsets *fw_offsets PAYLOAD_BSS;

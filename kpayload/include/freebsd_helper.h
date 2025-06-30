@@ -1,6 +1,13 @@
 #ifndef FREEBSD_HELPER_H_
 #define FREEBSD_HELPER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+// TODO: `thread`, ucred`, and `filedesc` are defined in the payload SDK.
+// Nothing from the payload SDK should be in kpayload
+
+#include "sparse.h"
+
 // clang-format off
 
 #define EVENTHANDLER_PRI_PRE_FIRST -10000

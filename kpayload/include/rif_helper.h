@@ -1,6 +1,11 @@
 #ifndef RIF_HELPER_H_
 #define RIF_HELPER_H_
 
+#include <stdint.h>
+
+#include "pfs_helper.h"
+#include "sparse.h"
+
 // clang-format off
 
 #define RIF_DIGEST_SIZE 0x10

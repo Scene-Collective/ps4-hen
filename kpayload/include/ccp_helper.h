@@ -1,6 +1,10 @@
 #ifndef CCP_HELPER_H_
 #define CCP_HELPER_H_
 
+#include <stdint.h>
+
+#include "freebsd_helper.h"
+
 // clang-format off
 
 #define CCP_MAX_PAYLOAD_SIZE 0x88

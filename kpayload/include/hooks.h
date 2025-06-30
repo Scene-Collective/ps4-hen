@@ -1,13 +1,19 @@
 #ifndef HOOKS_H_
 #define HOOKS_H_
 
-// clang-format off
-
 // golden
 // 6/12/2018
 
-// #include "proc.h"
-#include "elf.h"
+// clang-format off
+
+#include <stdint.h>
+
+#include "freebsd_helper.h"
+// TODO: `ucred` is defined in the payload SDK.
+// Nothing from the payload SDK should be in kpayload
+
+// TODO: This is also from the payload SDK...
+#include <elf.h>
 
 TYPE_BEGIN(struct thread, 0x800); // XXX: random, don't use directly without fixing it
 TYPE_FIELD(struct mtx *volatile td_lock, 0);

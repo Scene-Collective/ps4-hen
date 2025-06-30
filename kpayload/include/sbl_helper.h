@@ -1,6 +1,10 @@
 #ifndef SBL_HELPER_H_
 #define SBL_HELPER_H_
 
+#include <stdint.h>
+
+#include "freebsd_helper.h"
+
 // clang-format off
 
 #define SCE_SBL_ERROR_NPDRM_ENOTSUP 0x800F0A25

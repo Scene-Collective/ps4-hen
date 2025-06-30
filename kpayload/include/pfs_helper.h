@@ -1,6 +1,10 @@
 #ifndef PFS_HELPER_H_
 #define PFS_HELPER_H_
 
+#include <stdint.h>
+
+#include "sparse.h"
+
 // clang-format off
 
 #define EKPFS_SIZE 0x20
