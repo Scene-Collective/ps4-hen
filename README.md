@@ -4,6 +4,7 @@
 - Current Supports 5.05 - 12.02
 - Homebrew Enabler
 - [Plugins System](https://github.com/Scene-Collective/ps4-hen-plugins)
+  - Plugins are bundled into HEN, the `hen.bin` in this repository has plugins as of [latest](https://github.com/Scene-Collective/ps4-hen-plugins/releases/latest) tag.
   - Patches ShellUI to allow more features.
     - Features:
       - More details at [`plugin_mono`](https://github.com/Scene-Collective/ps4-hen-plugins/blob/main/.github/README.md#plugin_mono) page
