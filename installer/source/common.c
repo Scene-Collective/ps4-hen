@@ -11,6 +11,7 @@ void write_blob(const char *path, const void *blob, const size_t blobsz) {
     return;
   }
 
+  unlink(path);
   int fd = open(path, O_CREAT | O_RDWR, 0777);
   printf_debug("fd %s %d\n", path, fd);
   if (fd > 0) {
