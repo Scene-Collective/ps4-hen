@@ -97,6 +97,11 @@ int _main(struct thread *td) {
   const int u_to_sec = 1000 * 1000;
   initKernel();
   initLibc();
+  initModule();
+  const int ORBIS_SYSMODULE_ZLIB = 0x00C5;
+  if (sceSysmoduleLoadModule(ORBIS_SYSMODULE_ZLIB) == 0) {
+    initZlib();
+  }
 
 #ifdef DEBUG_SOCKET
   initNetwork();
@@ -186,7 +191,11 @@ int _main(struct thread *td) {
 
   if (config.upload_prx) {
     printf_debug("Writing plugin PRXs to disk...\n");
-    upload_prx_to_disk();
+    int r = upload_prx_to_disk();
+    if (r)
+    {
+      printf_notification("failed to decompress bundled plugins to disk\n");
+    }
   }
 
   if (!config.skip_patches) {
