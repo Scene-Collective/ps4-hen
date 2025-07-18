@@ -374,9 +374,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
   uint64_t cr0 = readCr0();
   writeCr0(cr0 & ~X86_CR0_WP);
 
-  // TODO:
-  // 6.00, 6.02, 6.20, 6.50, 6.51 // ps4-ipv6-uaf
-  // 6.70, 6.71                   // ps4jb2, ps4-ipv6-uaf
   if (fw_version == 474) {
     // Fixes
     //   - [X] PS4-5.05-Kernel-Exploit
@@ -916,10 +913,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x003C25D9];
@@ -1026,10 +1019,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x003C24D9];
@@ -1136,10 +1125,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x003C2899];
@@ -1164,7 +1149,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x0011464D]; // bzero
     kmem[0] = 0xEB;
 
-    kmem = (uint8_t *)&kernel_ptr[0x00114680]; // pagezero
+    kmem = (uint8_t *)&kernel_ptr[0x00114691]; // pagezero
     kmem[0] = 0xEB;
 
     kmem = (uint8_t *)&kernel_ptr[0x0011470D]; // memcpy
@@ -1246,10 +1231,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x0024026D];
@@ -1257,7 +1238,313 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
 
     kmem = (uint8_t *)&kernel_ptr[0x00240270];
     kmem[0] = 0x37;
-  } else if (fw_version == 672) {
+  } else if (fw_version == 600 || fw_version == 602) {
+    // Fixes
+    //   - [X] ps4-ipv6-uaf
+
+    // ChendoChap's patches from pOOBs4
+    kmem = (uint8_t *)&kernel_ptr[0x00000ADD]; // bcopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0011464D]; // bzero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114691]; // pagezero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0011470D];// // memcpy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114751]; // pagecopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x001148FD]; // copyin
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114DAD]; // copyinstr
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114E7D]; // copystr
+    kmem[0] = 0xEB;
+
+    // patch amd64_syscall() to allow calling syscalls everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x00000490];
+    kmem[0] = 0x00;
+    kmem[1] = 0x00;
+    kmem[2] = 0x00;
+    kmem[3] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004C6];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004BD];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
+    kmem[0] = 0x48;
+    kmem[1] = 0x3B;
+    kmem[2] = 0x90;
+    kmem[3] = 0xE0;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+    kmem[6] = 0x00;
+    kmem[7] = 0xEB;
+    kmem[8] = 0x00;
+
+    // repair sys_setuid() from exploit
+    kmem = (uint8_t *)&kernel_ptr[0x000290E2];
+    kmem[0] = 0xE8;
+    kmem[1] = 0x69;
+    kmem[2] = 0x2B;
+    kmem[3] = 0x27;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x000290ED];
+    kmem[0] = 0xEB;
+
+    // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x00352256];
+    kmem[0] = 0x38;
+    kmem[1] = 0xEA;
+    kmem[2] = 0x0F;
+    kmem[3] = 0x85;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+    kmem[6] = 0x00;
+    kmem[7] = 0x00;
+
+    // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x0027F65A];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+    kmem[2] = 0xC3;
+    kmem[3] = 0x01;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+    kmem[6] = 0x48;
+    kmem[7] = 0x8B;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0001A810];
+    kmem[0] = 0x48;
+    kmem[1] = 0x31;
+    kmem[2] = 0xC0;
+    kmem[3] = 0xC3;
+
+    // patch sys_mmap() to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x0024026D];
+    kmem[0] = 0x37;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00240270];
+    kmem[0] = 0x37;
+  } else if (fw_version == 620) {
+    // Fixes
+    //   - [X] ps4-ipv6-uaf
+
+    // ChendoChap's patches from pOOBs4
+    kmem = (uint8_t *)&kernel_ptr[0x00000ADD]; // bcopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0011464D]; // bzero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114691]; // pagezero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0011470D]; // memcpy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114751]; // pagecopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x001148FD]; // copyin
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114DAD]; // copyinstr
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00114E7D]; // copystr
+    kmem[0] = 0xEB;
+
+    // patch amd64_syscall() to allow calling syscalls everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x00000490];
+    kmem[0] = 0x00;
+    kmem[1] = 0x00;
+    kmem[2] = 0x00;
+    kmem[3] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004C6];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004BD];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
+    kmem[0] = 0x48;
+    kmem[1] = 0x3B;
+    kmem[2] = 0x90;
+    kmem[3] = 0xE0;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+    kmem[6] = 0x00;
+    kmem[7] = 0xEB;
+    kmem[8] = 0x00;
+
+    // repair sys_setuid() from exploit
+    kmem = (uint8_t *)&kernel_ptr[0x000290E2];
+    kmem[0] = 0xE8;
+    kmem[1] = 0x89;
+    kmem[2] = 0x2B;
+    kmem[3] = 0x27;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x000290ED];
+    kmem[0] = 0xEB;
+
+    // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x00352278];
+    kmem[0] = 0x0F;
+    kmem[1] = 0x85;
+    kmem[2] = 0x00;
+    kmem[3] = 0x00;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+
+    // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x0027F67A];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+    kmem[2] = 0xC3;
+    kmem[3] = 0x01;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0001A810];
+    kmem[0] = 0x48;
+    kmem[1] = 0x31;
+    kmem[2] = 0xC0;
+    kmem[3] = 0xC3;
+
+    // patch sys_mmap() to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x0024026D];
+    kmem[0] = 0x37;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00240270];
+    kmem[0] = 0x37;
+  } else if (fw_version == 650 || fw_version == 651) {
+    // Fixes
+    //   - [X] ps4-ipv6-uaf
+
+    // ChendoChap's patches from pOOBs4
+    kmem = (uint8_t *)&kernel_ptr[0x0063C50E]; // veriPatch
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00000ACD]; // bcopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C114D]; // bzero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C1191]; // pagezero
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C120D]; // memcpy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C1251]; // pagecopy
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C13FD]; // copyin
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C18AD]; // copyinstr
+    kmem[0] = 0xEB;
+
+    kmem = (uint8_t *)&kernel_ptr[0x003C197D]; // copystr
+    kmem[0] = 0xEB;
+
+    // stop sysVeri from causing a delayed panic on suspend
+    kmem = (uint8_t *)&kernel_ptr[0x0063CE0F];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    // patch amd64_syscall() to allow calling syscalls everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x00000490];
+    kmem[0] = 0x00;
+    kmem[1] = 0x00;
+    kmem[2] = 0x00;
+    kmem[3] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004C6];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004BD];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
+    kmem[0] = 0x48;
+    kmem[1] = 0x3B;
+    kmem[2] = 0x90;
+    kmem[3] = 0xE8;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+    kmem[6] = 0x00;
+    kmem[7] = 0xEB;
+    kmem[8] = 0x00;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x0010BB20];
+    kmem[0] = 0xE8;
+    kmem[1] = 0xBB;
+    kmem[2] = 0x1B;
+    kmem[3] = 0xFC;
+    kmem[4] = 0xFF;
+    kmem[5] = 0x85;
+    kmem[6] = 0xC0;
+    kmem[7] = 0xEB;
+
+    // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x00451A08];
+    kmem[0] = 0x0F;
+    kmem[1] = 0x85;
+    kmem[2] = 0x00;
+    kmem[3] = 0x00;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+
+    // TODO: Description of this patch. patch sys_dynlib_load_prx()
+    kmem = (uint8_t *)&kernel_ptr[0x001D801E];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+
+    // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
+    kmem = (uint8_t *)&kernel_ptr[0x001D85AA];
+    kmem[0] = 0x90;
+    kmem[1] = 0xE9;
+    kmem[2] = 0xC6;
+    kmem[3] = 0x01;
+    kmem[4] = 0x00;
+    kmem[5] = 0x00;
+
+    kmem = (uint8_t *)&kernel_ptr[0x00419F20];
+    kmem[0] = 0x48;
+    kmem[1] = 0x31;
+    kmem[2] = 0xC0;
+    kmem[3] = 0xC3;
+
+    // patch sys_mmap() to allow rwx mappings
+    kmem = (uint8_t *)&kernel_ptr[0x000AB57A];
+    kmem[0] = 0x37;
+
+    kmem = (uint8_t *)&kernel_ptr[0x000AB57D];
+    kmem[0] = 0x37;
+  } else if (fw_version >= 670 && fw_version <= 672) {
     // Fixes
     //   - [X] ps4jb2
     //   - [X] ps4-ipv6-uaf
