@@ -425,17 +425,17 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x003DD4D1];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // repair
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE0;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
     kmem[6] = 0x00;
-    kmem[7] = 0xEB;
+    kmem[7] = 0xEB; // jmp
     kmem[8] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x00113B73];
     kmem[0] = 0xE8;
     kmem[1] = 0xB8;
@@ -447,36 +447,34 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00397876];
-    kmem[0] = 0x38;
-    kmem[1] = 0xEA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x00397878];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x13; // repair
+    kmem[3] = 0x07;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x003D05AE];
-    kmem[0] = 0x90;
+    kmem[0] = 0x90; // jmp
     kmem[1] = 0xE9;
-    kmem[2] = 0x51;
+    kmem[2] = 0x51; // repair
     kmem[3] = 0x03;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x000686A0];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // ret 0
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
+    kmem[4] = 0x04; // repair
+    kmem[5] = 0x25;
     kmem[6] = 0x00;
     kmem[7] = 0x00;
+    kmem[8] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x001413A4];
@@ -535,17 +533,17 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x000004B1];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // repair
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE0;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
     kmem[6] = 0x00;
-    kmem[7] = 0xEB;
+    kmem[7] = 0xEB; // jmp
     kmem[8] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x00054A72];
     kmem[0] = 0xE8;
     kmem[1] = 0xA9;
@@ -557,36 +555,34 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x001A3AF6];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x001A3AF8];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x8A; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x00237E2A];
-    kmem[0] = 0x90;
+    kmem[0] = 0x90; // jmp
     kmem[1] = 0xE9;
-    kmem[2] = 0xC0;
+    kmem[2] = 0xC0; // repair
     kmem[3] = 0x01;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x002B2350];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // ret 0
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
+    kmem[4] = 0x04; // repair
+    kmem[5] = 0x25;
     kmem[6] = 0x00;
     kmem[7] = 0x00;
+    kmem[8] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x0013D510];
@@ -645,17 +641,17 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x000004B1];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // repair
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE0;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
     kmem[6] = 0x00;
-    kmem[7] = 0xEB;
+    kmem[7] = 0xEB; // jmp
     kmem[8] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x00054A72];
     kmem[0] = 0xE8;
     kmem[1] = 0x39;
@@ -667,36 +663,34 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x001A3C06];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x001A3C08];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x8A; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x00237F3A];
-    kmem[0] = 0x90;
+    kmem[0] = 0x90; // jmp
     kmem[1] = 0xE9;
-    kmem[2] = 0xC0;
+    kmem[2] = 0xC0; // repair
     kmem[3] = 0x01;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x002B2620];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // ret 0
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
+    kmem[4] = 0x04; // repair
+    kmem[5] = 0x25;
     kmem[6] = 0x00;
     kmem[7] = 0x00;
+    kmem[8] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x0013D620];
@@ -755,17 +749,17 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[1] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x000004B1];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // repair
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE0;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
     kmem[6] = 0x00;
-    kmem[7] = 0xEB;
+    kmem[7] = 0xEB; // jmp
     kmem[8] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x00054A72];
     kmem[0] = 0xE8;
     kmem[1] = 0x39;
@@ -777,36 +771,35 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x001A3C06];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x001A3C08];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x8A; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
+    // also "repair" the exploit's patch
     kmem = (uint8_t *)&kernel_ptr[0x00237F3A];
-    kmem[0] = 0x90;
+    kmem[0] = 0x90; // jmp
     kmem[1] = 0xE9;
-    kmem[2] = 0xC0;
+    kmem[2] = 0xC0; // repair
     kmem[3] = 0x01;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x002B2620];
-    kmem[0] = 0x48;
+    kmem[0] = 0x48; // ret 0
     kmem[1] = 0x31;
     kmem[2] = 0xC0;
     kmem[3] = 0xC3;
-    kmem[4] = 0x25;
-    kmem[5] = 0x00;
+    kmem[4] = 0x04; // repair
+    kmem[5] = 0x25;
     kmem[6] = 0x00;
     kmem[7] = 0x00;
+    kmem[8] = 0x00;
 
     // patch sys_mmap() to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x0013D620];
@@ -864,18 +857,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000107C2];
     kmem[0] = 0xE8;
     kmem[1] = 0x79;
@@ -887,26 +873,19 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0002EE96];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x0002EE98];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x25; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x0006390A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x00400130];
     kmem[0] = 0x48;
@@ -970,18 +949,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000107C2];
     kmem[0] = 0xE8;
     kmem[1] = 0x79;
@@ -993,26 +965,19 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0002EE96];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x0002EE98];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x25; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x0006390A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x00400030];
     kmem[0] = 0x48;
@@ -1076,18 +1041,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000107C2];
     kmem[0] = 0xE8;
     kmem[1] = 0x39;
@@ -1099,26 +1057,19 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0002EE96];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x0002EE98];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x25; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x0006390A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x004003F0];
     kmem[0] = 0x48;
@@ -1182,18 +1133,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000290E2];
     kmem[0] = 0xE8;
     kmem[1] = 0x69;
@@ -1205,26 +1149,19 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00352256];
-    kmem[0] = 0x38;
-    kmem[1] = 0xFA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x00352258];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x95; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x0027F65A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x0001A810];
     kmem[0] = 0x48;
@@ -1282,18 +1219,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000290E2];
     kmem[0] = 0xE8;
     kmem[1] = 0x69;
@@ -1305,26 +1235,19 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00352256];
-    kmem[0] = 0x38;
-    kmem[1] = 0xEA;
-    kmem[2] = 0x0F;
-    kmem[3] = 0x85;
+    // also "repair" the exploit's patch
+    kmem = (uint8_t *)&kernel_ptr[0x00352258];
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x95; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0x00;
 
     // patch sys_dynlib_dlsym() to allow dynamic symbol resolution everywhere
     kmem = (uint8_t *)&kernel_ptr[0x0027F65A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x48;
-    kmem[7] = 0x8B;
 
     kmem = (uint8_t *)&kernel_ptr[0x0001A810];
     kmem[0] = 0x48;
@@ -1382,18 +1305,11 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE0;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // repair sys_setuid() from exploit
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000290E2];
     kmem[0] = 0xE8;
     kmem[1] = 0x89;
@@ -1405,11 +1321,12 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    // also "repair" the exploit's patch
     kmem = (uint8_t *)&kernel_ptr[0x00352278];
-    kmem[0] = 0x0F;
-    kmem[1] = 0x85;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x95; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
 
@@ -1417,10 +1334,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x0027F67A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC3;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x0001A810];
     kmem[0] = 0x48;
@@ -1487,34 +1400,29 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
-    kmem = (uint8_t *)&kernel_ptr[0x000004B2];
-    kmem[0] = 0x48;
-    kmem[1] = 0x3B;
-    kmem[2] = 0x90;
-    kmem[3] = 0xE8;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
 
-    // patch sys_setuid() to allow freely changing the effective user ID
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x0010BB20];
     kmem[0] = 0xE8;
     kmem[1] = 0xBB;
     kmem[2] = 0x1B;
     kmem[3] = 0xFC;
     kmem[4] = 0xFF;
-    kmem[5] = 0x85;
-    kmem[6] = 0xC0;
-    kmem[7] = 0xEB;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x0010BB27];
+    kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    // also "repair" the exploit's patch
     kmem = (uint8_t *)&kernel_ptr[0x00451A08];
-    kmem[0] = 0x0F;
-    kmem[1] = 0x85;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x68; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
 
@@ -1527,10 +1435,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x001D85AA];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC6;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x00419F20];
     kmem[0] = 0x48;
@@ -1598,34 +1502,36 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
+    // "repair" from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000004B2];
     kmem[0] = 0x48;
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE8;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
 
-    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x0010BED0];
     kmem[0] = 0xE8;
     kmem[1] = 0xBB;
     kmem[2] = 0x1B;
     kmem[3] = 0xFC;
     kmem[4] = 0xFF;
-    kmem[5] = 0x85;
-    kmem[6] = 0xC0;
-    kmem[7] = 0xEB;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x0010BED7];
+    kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    // also "repair" the exploit's patch
     kmem = (uint8_t *)&kernel_ptr[0x00451DB8];
-    kmem[0] = 0x0F;
-    kmem[1] = 0x85;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x68; // repair
+    kmem[3] = 0x06;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
 
@@ -1638,10 +1544,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x001D895A];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC6;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x0041A2D0];
     kmem[0] = 0x48;
@@ -1661,7 +1563,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     //   - [X] ps4-ipv6-uaf
     //   - [X] pppwn
 
-    // Unpatch SysVeri
+    // Unpatch SysVeri from ps4-ipv6-uaf
     kmem = (uint8_t *)&kernel_ptr[0x0063A160];
     kmem[0] = 0x55;
 
@@ -1683,7 +1585,15 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[2] = 0x89;
     kmem[3] = 0xE5;
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore "extra" ps4jb2 patches
+    kmem = (uint8_t *)&kernel_ptr[0x0030F137];
+    kmem[0] = 0x74;
+
+    kmem = (uint8_t *)&kernel_ptr[0x0029EEC4];
+    kmem[0] = 0x15;
+    kmem[1] = 0x02;
+
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x0002F295];
     kmem[0] = 0xC7;
 
@@ -1742,33 +1652,35 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
+    // "repair" from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000004B2];
     kmem[0] = 0x48;
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE8;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
 
-    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x00087B70];
     kmem[0] = 0xE8;
     kmem[1] = 0x7B;
     kmem[2] = 0x12;
     kmem[3] = 0x03;
     kmem[4] = 0x00;
-    kmem[5] = 0x85;
-    kmem[6] = 0xC0;
-    kmem[7] = 0xEB;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x00087B77];
+    kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
+    // also "repair" the exploit's patch
     kmem = (uint8_t *)&kernel_ptr[0x00264C08];
-    kmem[0] = 0x0F;
-    kmem[1] = 0x85;
-    kmem[2] = 0x00;
+    kmem[0] = 0xEB; // jmp
+    kmem[1] = 0x04;
+    kmem[2] = 0x00; // repair
     kmem[3] = 0x00;
     kmem[4] = 0x00;
     kmem[5] = 0x00;
@@ -1782,10 +1694,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x0009547B];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xBC;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x002F2C20];
     kmem[0] = 0x48;
@@ -1804,7 +1712,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     //   - [X] ps4jb2
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x0028FA55];
     kmem[0] = 0xC7;
 
@@ -1863,36 +1771,33 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
     kmem[1] = 0x00;
 
+    // "repair" from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x000004B2];
     kmem[0] = 0x48;
     kmem[1] = 0x3B;
     kmem[2] = 0x90;
     kmem[3] = 0xE8;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
-    kmem[6] = 0x00;
-    kmem[7] = 0xEB;
-    kmem[8] = 0x00;
 
-    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x000004B9];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x00;
+
+    // "repair" sys_setuid() from the exploit
     kmem = (uint8_t *)&kernel_ptr[0x0037A320];
     kmem[0] = 0xE8;
     kmem[1] = 0x8B;
     kmem[2] = 0x49;
     kmem[3] = 0x06;
     kmem[4] = 0x00;
-    kmem[5] = 0x85;
-    kmem[6] = 0xC0;
-    kmem[7] = 0xEB;
+
+    // patch sys_setuid() to allow freely changing the effective user ID
+    kmem = (uint8_t *)&kernel_ptr[0x0037A327];
+    kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
     kmem = (uint8_t *)&kernel_ptr[0x003014C8];
-    kmem[0] = 0x0F;
-    kmem[1] = 0x85;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x00451E04];
@@ -1903,10 +1808,6 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem = (uint8_t *)&kernel_ptr[0x004523C4];
     kmem[0] = 0x90;
     kmem[1] = 0xE9;
-    kmem[2] = 0xC7;
-    kmem[3] = 0x01;
-    kmem[4] = 0x00;
-    kmem[5] = 0x00;
 
     kmem = (uint8_t *)&kernel_ptr[0x00029A30];
     kmem[0] = 0x48;
@@ -1924,7 +1825,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x0025E415];
     kmem[0] = 0xC7;
 
@@ -1991,11 +1892,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x003EC68D];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x003EC68B];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x00318D84];
@@ -2022,7 +1921,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x003A4345];
     kmem[0] = 0xC7;
 
@@ -2089,11 +1988,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0014D6DD];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x0014D6DB];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x00017474];
@@ -2121,7 +2018,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     //   - [X] pOOBs4
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x00271705];
     kmem[0] = 0xC7;
 
@@ -2188,11 +2085,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00080B8D];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x00080B8B];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x0023AEC4];
@@ -2219,7 +2114,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x00271385];
     kmem[0] = 0xC7;
 
@@ -2286,11 +2181,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00080B8D];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x00080B8B];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x0023AB94];
@@ -2317,7 +2210,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x00201F15];
     kmem[0] = 0xC7;
 
@@ -2384,11 +2277,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x00196D3D];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x00196D3B];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x0019F724];
@@ -2415,7 +2306,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x00472F75];
     kmem[0] = 0xC7;
 
@@ -2482,11 +2373,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0392070D];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x0392070B];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x0018FAA4];
@@ -2513,7 +2402,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x000D75C5];
     kmem[0] = 0xC7;
 
@@ -2593,11 +2482,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0047B2EE];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x0047B2EC];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x00212AD4];
@@ -2627,7 +2514,7 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     // Fixes
     //   - [X] pppwn
 
-    // Unpatch extra bytes from copyin, copyout, and copinstr (pppwn)
+    // Restore extra bytes from copyin, copyout, and copinstr (pppwn)
     kmem = (uint8_t *)&kernel_ptr[0x002DE045];
     kmem[0] = 0xC7;
 
@@ -2707,11 +2594,9 @@ static int kpayload_exploit_fixes(struct thread *td, struct kpayload_firmware_ar
     kmem[0] = 0xEB;
 
     // patch vm_map_protect() (called by sys_mprotect()) to allow rwx mappings
-    kmem = (uint8_t *)&kernel_ptr[0x0035C8EE];
-    kmem[0] = 0x00;
-    kmem[1] = 0x00;
-    kmem[2] = 0x00;
-    kmem[3] = 0x00;
+    kmem = (uint8_t *)&kernel_ptr[0x0035C8EC];
+    kmem[0] = 0xEB;
+    kmem[1] = 0x04;
 
     // TODO: Description of this patch. patch sys_dynlib_load_prx()
     kmem = (uint8_t *)&kernel_ptr[0x001E46F4];
