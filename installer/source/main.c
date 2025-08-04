@@ -112,12 +112,11 @@ int _main(struct thread *td) {
   // Jailbreak the process
   jailbreak();
 
-  // Use temp file to prevent re-running HEN
+  // Check temp file to prevent re-running HEN
   if (file_exists(IS_INSTALLED_PATH)) {
     printf_notification("HEN is already installed. Skipping...");
     return 0;
   }
-  touch_file(IS_INSTALLED_PATH);
 
   // Apply all HEN kernel patches
   install_patches();
@@ -177,6 +176,9 @@ int _main(struct thread *td) {
 
   // Install and run kpayload
   install_payload(&config);
+
+  // Create temp file to prevent re-running HEN
+  touch_file(IS_INSTALLED_PATH);
 
   // Do this after the kpayload so if the user spoofs it doesn't affect checks in the kpayload
   if (config.target_id[0] != '\0') {
