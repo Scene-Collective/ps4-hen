@@ -122,36 +122,32 @@ int _main(struct thread *td) {
   struct configuration config;
   init_config(&config);
 
-  const bool ver_match = config.config_version != DEFAULT_CONFIG_VERSION;
-  const bool found_ver = found_version == 0;
   bool kill_ui = false;
   int sleep_sec = 0;
   const int wait_sec = 5;
   const int u_to_sec = 1000 * 1000;
-  if (file_exists(HDD_INI_PATH) && (ver_match || found_ver)) {
-    const char *reason = " unknown!";
-    if (ver_match) {
-      reason = " out of date!";
-    } else if (found_ver) {
-      reason = " not found!";
-    }
-    printf_debug("config version not match\n");
-    printf_debug("config.config_version: %d\n", config.config_version);
-    printf_debug("found_version: %d\n", found_version);
+
+  init_config(&config);
+
+  bool config_exists = file_exists(HDD_INI_PATH);
+  const bool ver_mismatch = (config.config_version != DEFAULT_CONFIG_VERSION);
+
+  if (!config_exists || ver_mismatch) {
+    printf_debug("Config missing or version mismatch -> writing new config...\n");
     upload_ini(HDD_INI_PATH);
     bool found_usb = file_exists(USB_INI_PATH) == 1;
     if (found_usb) {
       upload_ini(USB_INI_PATH);
     }
-    printf_notification("Config version (%d/%d)%s\n"
-                        "Updating settings file on %s%s...", config.config_version, DEFAULT_CONFIG_VERSION, reason, "HDD", found_usb ? " and USB" : "");
-    init_config(&config);
-    kill_ui = config.enable_plugins == true;
-    sleep_sec = kill_ui ? wait_sec : 1;
-    // sleep so user can see welcome message before shellui restarts
-    // always sleep for `wait_sec` so other notifications aren't shown
-    usleep(wait_sec * u_to_sec);
   }
+  init_config(&config);
+
+  if (config.enable_plugins == true) {
+    printf_debug("enable_plugins = 1, restarting shellui...\n");
+    kill_ui = true;
+  } else {
+    printf_debug("enable_plugins = 0, not restarting shellui.\n");
+}
 
   if (config.exploit_fixes) {
     printf_debug("Applying exploit fixes...\n");
@@ -199,7 +195,9 @@ int _main(struct thread *td) {
     InstallShellCoreCodeForAppinfo();
   }
 
-  printf_notification("Welcome to HEN %s", VERSION);
+  printf_notification("Welcome to HEN%s %s",
+    config.enable_plugins ? "" : "-Lite",
+    VERSION);
 
   const char *proc = kill_ui ? "SceShellUI" : NULL;
   if (kill_ui) {
