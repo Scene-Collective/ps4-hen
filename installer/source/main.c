@@ -181,9 +181,6 @@ int _main(struct thread *td) {
   // Install and run kpayload
   install_payload(&config);
 
-  // Create temp file to prevent re-running HEN
-  touch_file(IS_INSTALLED_PATH);
-
   // Do this after the kpayload so if the user spoofs it doesn't affect checks in the kpayload
   if (config.target_id[0] != '\0') {
     printf_debug("Setting new target ID...\n");
@@ -199,6 +196,8 @@ int _main(struct thread *td) {
     InstallShellCoreCodeForAppinfo();
   }
 
+  // Create temp file to prevent re-running HEN
+  touch_file(IS_INSTALLED_PATH);
   printf_notification("Welcome to HEN %s", VERSION);
 
   const char *proc = kill_ui ? "SceShellUI" : NULL;
