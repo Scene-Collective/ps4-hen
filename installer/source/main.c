@@ -204,6 +204,7 @@ int _main(struct thread *td) {
   if (kill_ui) {
     usleep(sleep_sec * u_to_sec);
     printf_notification("HEN will restart %s\nin %d seconds...", proc, sleep_sec);
+    usleep(sleep_sec * u_to_sec);
   }
 
 #ifdef DEBUG_SOCKET
@@ -211,7 +212,6 @@ int _main(struct thread *td) {
   SckClose(DEBUG_SOCK);
 #endif
 
-  usleep(sleep_sec * u_to_sec);
   // this was chosen because SceShellCore will try to restart this daemon if it crashes
   // or manually killed in this case
   kill_proc("ScePartyDaemon");
