@@ -195,8 +195,9 @@ int _main(struct thread *td) {
     InstallShellCoreCodeForAppinfo();
   }
 
-  printf_notification("Welcome to HEN%s %s",
+  printf_notification("Welcome to HEN%s%s %s",
     config.enable_plugins ? "" : "-Lite",
+    kill_ui ? " (Shell UI restarting)" : " (Shell UI not restarting)",
     VERSION);
 
   const char *proc = kill_ui ? "SceShellUI" : NULL;
