@@ -124,7 +124,7 @@ int _main(struct thread *td) {
 
   bool kill_ui = false;
   int sleep_sec = 0;
-  const int wait_sec = 5;
+//  const int wait_sec = 5;
   const int u_to_sec = 1000 * 1000;
 
   init_config(&config);
@@ -195,16 +195,16 @@ int _main(struct thread *td) {
     InstallShellCoreCodeForAppinfo();
   }
 
-  printf_notification("Welcome to HEN%s%s %s",
+  printf_notification("Welcome to HEN%s %s\n %s",
     config.enable_plugins ? "" : "-Lite",
-    kill_ui ? " (Shell UI restarting)" : " (Shell UI not restarting)",
-    VERSION);
+    VERSION,
+    kill_ui ? " (Shell UI restarting)" : " (Shell UI not restarting)");
 
   const char *proc = kill_ui ? "SceShellUI" : NULL;
-  if (kill_ui) {
-    usleep(sleep_sec * u_to_sec);
-    printf_notification("HEN will restart %s\nin %d seconds...", proc, sleep_sec);
-  }
+//  if (kill_ui) {
+//    usleep(sleep_sec * u_to_sec);
+//    printf_notification("HEN will restart %s\nin %d seconds...", proc, sleep_sec);
+//  }
 
 #ifdef DEBUG_SOCKET
   printf_debug("Closing socket...\n");
@@ -214,7 +214,10 @@ int _main(struct thread *td) {
   usleep(sleep_sec * u_to_sec);
   // this was chosen because SceShellCore will try to restart this daemon if it crashes
   // or manually killed in this case
-  kill_proc("ScePartyDaemon");
+  if (config.enable_plugins && file_exists(PRX_SERVER_PATH)) {
+    kill_proc("ScePartyDaemon");
+  }
+  // SceShellUI is also monitored by SceShellCore
   kill_proc(proc);
 
   return 0;
