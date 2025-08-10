@@ -122,9 +122,10 @@ int _main(struct thread *td) {
   struct configuration config;
   init_config(&config);
 
+  const bool ver_match = config.config_version != DEFAULT_CONFIG_VERSION;
+  const bool found_ver = found_version == 0;
   bool kill_ui = false;
   int sleep_sec = 0;
-//  const int wait_sec = 5;
   const int u_to_sec = 1000 * 1000;
 
   init_config(&config);
@@ -132,13 +133,20 @@ int _main(struct thread *td) {
   bool config_exists = file_exists(HDD_INI_PATH);
   const bool ver_mismatch = (config.config_version != DEFAULT_CONFIG_VERSION);
 
-  if (!config_exists || ver_mismatch) {
+  if (!config_exists || ver_mismatch || found_ver) {
+    const char *reason = " unknown!";
+        if (ver_match) {
+      reason = " out of date!";
+    } else if (found_ver) {
+      reason = " not found!";
+    }
     printf_debug("Config missing or version mismatch -> writing new config...\n");
     upload_ini(HDD_INI_PATH);
     bool found_usb = file_exists(USB_INI_PATH) == 1;
     if (found_usb) {
       upload_ini(USB_INI_PATH);
     }
+    printf_notification("Config version (%d/%d)%s\n" "Updating settings file on %s%s...", config.config_version, DEFAULT_CONFIG_VERSION, reason, "HDD", found_usb ? " and USB" : "");
   }
   init_config(&config);
 
@@ -147,7 +155,7 @@ int _main(struct thread *td) {
     kill_ui = true;
   } else {
     printf_debug("enable_plugins = 0, not restarting shellui.\n");
-}
+  }
 
   if (config.exploit_fixes) {
     printf_debug("Applying exploit fixes...\n");
@@ -177,9 +185,6 @@ int _main(struct thread *td) {
   // Install and run kpayload
   install_payload(&config);
 
-  // Create temp file to prevent re-running HEN
-  touch_file(IS_INSTALLED_PATH);
-
   // Do this after the kpayload so if the user spoofs it doesn't affect checks in the kpayload
   if (config.target_id[0] != '\0') {
     printf_debug("Setting new target ID...\n");
@@ -195,23 +200,23 @@ int _main(struct thread *td) {
     InstallShellCoreCodeForAppinfo();
   }
 
+  // Create temp file to prevent re-running HEN
+  touch_file(IS_INSTALLED_PATH);
+
   printf_notification("Welcome to HEN%s %s\n %s",
     config.enable_plugins ? "" : "-Lite",
     VERSION,
     kill_ui ? " (Shell UI restarting)" : " (Shell UI not restarting)");
 
+  usleep(sleep_sec * u_to_sec);
+
   const char *proc = kill_ui ? "SceShellUI" : NULL;
-//  if (kill_ui) {
-//    usleep(sleep_sec * u_to_sec);
-//    printf_notification("HEN will restart %s\nin %d seconds...", proc, sleep_sec);
-//  }
 
 #ifdef DEBUG_SOCKET
   printf_debug("Closing socket...\n");
   SckClose(DEBUG_SOCK);
 #endif
 
-  usleep(sleep_sec * u_to_sec);
   // this was chosen because SceShellCore will try to restart this daemon if it crashes
   // or manually killed in this case
   if (config.enable_plugins && file_exists(PRX_SERVER_PATH)) {
