@@ -124,10 +124,10 @@ int _main(struct thread *td) {
 
   const bool ver_match = config.config_version != DEFAULT_CONFIG_VERSION;
   const bool found_ver = found_version == 0;
-  bool kill_ui = false;
-  int sleep_sec = 0;
+  bool kill_ui = config.enable_plugins;
   const int wait_sec = 5;
   const int u_to_sec = 1000 * 1000;
+  int sleep_sec = kill_ui ? wait_sec : 1;
   if (file_exists(HDD_INI_PATH) && (ver_match || found_ver)) {
     const char *reason = " unknown!";
     if (ver_match) {
@@ -146,8 +146,6 @@ int _main(struct thread *td) {
     printf_notification("Config version (%d/%d)%s\n"
                         "Updating settings file on %s%s...", config.config_version, DEFAULT_CONFIG_VERSION, reason, "HDD", found_usb ? " and USB" : "");
     init_config(&config);
-    kill_ui = config.enable_plugins == true;
-    sleep_sec = kill_ui ? wait_sec : 1;
     // sleep so user can see welcome message before shellui restarts
     // always sleep for `wait_sec` so other notifications aren't shown
     usleep(wait_sec * u_to_sec);
