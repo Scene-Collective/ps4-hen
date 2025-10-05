@@ -258,7 +258,7 @@ PAYLOAD_CODE int shellcore_patch(void) {
   const char *enable_fpkg_patch_data;
   if (fw_version >= 474 && fw_version <= 620) {
     enable_fpkg_patch_data = "\xE9\x96\x00\x00\x00";
-  } else if (fw_version >= 650 && fw_version <= 1252) {
+  } else if (fw_version >= 650 && fw_version <= 1302) {
     enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
   } else {
     enable_fpkg_patch_data = "\xE9\x98\x00\x00\x00";
@@ -381,7 +381,7 @@ PAYLOAD_CODE int shellui_patch(void) {
     remote_play_patch_data = "\xE9\xBA\x02\x00\x00";
   } else if (fw_version >= 950 && fw_version <= 960) {
     remote_play_patch_data = "\xE9\xA2\x02\x00\x00";
-  } else if (fw_version >= 1000 && fw_version <= 1252) {
+  } else if (fw_version >= 1000 && fw_version <= 1302) {
     remote_play_patch_data = "\xE9\x5C\x02\x00\x00";
   } else {
     remote_play_patch_data = "\xE9\x5C\x02\x00\x00";
