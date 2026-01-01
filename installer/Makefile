@@ -77,7 +77,11 @@ help:
 	@echo "Available targets:"
 	@echo "  all     - Build the project (default)"
 	@echo "  clean   - Remove build artifacts"
+	@echo "  Send    - Send payload to console at port 9020. `PS4_HOST` must be defined to console IP."
 	@echo "  info    - Show build configuration"
 	@echo "  help    - Show this help message"
+
+send: $(TARGET)
+	nc -q1 $(PS4_HOST) 9020 < $(TARGET)
 
 .INTERMEDIATE: temp.t

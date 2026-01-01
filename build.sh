@@ -10,7 +10,7 @@ if [ "$(id -u)" -eq 0 ] && grep -qi ubuntu /etc/os-release; then
 fi
 
 pushd kpayload > /dev/null
-make
+make clean all
 popd > /dev/null
 
 mkdir -p tmp
@@ -50,7 +50,7 @@ popd > /dev/null
 xxd -i "hen.ini" | sed 's/^unsigned /static const unsigned /' > "installer/source/hen.ini.inc.c"
 
 pushd installer > /dev/null
-make
+make clean all
 popd > /dev/null
 
 rm -f hen.bin
