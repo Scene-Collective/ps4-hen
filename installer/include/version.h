@@ -3,6 +3,6 @@
 
 #define VERSION "2.2.0 BETA"
 #define MIN_FW 474
-#define MAX_FW 1350
+#define MAX_FW 1352
 
 #endif
