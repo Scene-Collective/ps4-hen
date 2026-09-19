@@ -14,7 +14,7 @@ TARGET  := $(shell basename $(CURDIR)).bin
 # Compiler flags
 OPTIMIZATION := -Os
 STANDARDS    := -std=c11 -fno-builtin -nostartfiles -nostdlib
-WARNINGS     := -Wno-unused-const-variable -Wall -Wextra # -Werror
+WARNINGS     := -Wno-unused-const-variable -Wno-unused-variable -Wall -Wextra # -Werror
 ARCH_FLAGS   := -masm=intel -march=btver2 -mtune=btver2 -m64 -mabi=sysv -mcmodel=small -fpie
 CFLAGS       := $(IDIRS) $(OPTIMIZATION) $(STANDARDS) $(WARNINGS) $(ARCH_FLAGS) -ffunction-sections -fdata-sections
 
