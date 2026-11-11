@@ -59,6 +59,7 @@ Massive credits to the following:
 - [ChendoChap](https://github.com/ChendoChap)
 - [Biorn1950](https://github.com/Biorn1950)
 - [Al-Azif](https://github.com/Al-Azif)
+- [EchoStretch](https://github.com/EchoStretch)
 - Anonymous
 - illusiony
 
