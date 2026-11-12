@@ -11,10 +11,12 @@
 #include "plugin_mono.prx.inc.c"
 #include "plugin_shellcore.prx.inc.c"
 
-void upload_prx_to_disk(void) {
-  write_blob(PRX_BOOTLOADER_PATH, plugin_bootloader_prx, plugin_bootloader_prx_len);
-  write_blob(PRX_LOADER_PATH, plugin_loader_prx, plugin_loader_prx_len);
-  write_blob(PRX_SERVER_PATH, plugin_server_prx, plugin_server_prx_len);
-  write_blob(PRX_MONO_PATH, plugin_mono_prx, plugin_mono_prx_len);
-  write_blob(PRX_SHELLCORE_PATH, plugin_shellcore_prx, plugin_shellcore_prx_len);
+int upload_prx_to_disk(void) {
+  int r = 0;
+  r |= unchunk_decompress_and_write(plugin_bootloader_prx_chunks, plugin_bootloader_prx_chunk_lens, plugin_bootloader_prx_chunk_count, plugin_bootloader_prx_total_size, PRX_BOOTLOADER_PATH);
+  r |= unchunk_decompress_and_write(plugin_loader_prx_chunks, plugin_loader_prx_chunk_lens, plugin_loader_prx_chunk_count, plugin_loader_prx_total_size, PRX_LOADER_PATH);
+  r |= unchunk_decompress_and_write(plugin_mono_prx_chunks, plugin_mono_prx_chunk_lens, plugin_mono_prx_chunk_count, plugin_mono_prx_total_size, PRX_MONO_PATH);
+  r |= unchunk_decompress_and_write(plugin_server_prx_chunks, plugin_server_prx_chunk_lens, plugin_server_prx_chunk_count, plugin_server_prx_total_size, PRX_SERVER_PATH);
+  r |= unchunk_decompress_and_write(plugin_shellcore_prx_chunks, plugin_shellcore_prx_chunk_lens, plugin_shellcore_prx_chunk_count, plugin_shellcore_prx_total_size, PRX_SHELLCORE_PATH);
+  return r;
 }
